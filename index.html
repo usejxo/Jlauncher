@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eaglercraft Launcher</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: white;
+        }
+        .sidebar {
+            background-color: #111;
+            width: 200px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar img {
+            border-radius: 50%;
+            margin: 20px auto;
+            width: 100px;
+            height: 100px;
+        }
+        .sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            color: white;
+            text-align: left;
+            display: block;
+            font-size: 16px;
+        }
+        .sidebar a:hover {
+            background-color: #333;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+        }
+        .settings {
+            display: none;
+        }
+        .launcher-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .launcher-content button {
+            padding: 15px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        .settings-content input {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+        .settings-content button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img id="profile-pic" src="https://jlauncher.netlify.app/images/default/profileimg.png" alt="Profile Picture">
+        <a href="#" id="minecraft-tab">Minecraft Java Edition</a>
+        <a href="#" id="settings-tab">Settings</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Minecraft Java Edition Launcher -->
+        <div id="minecraft-content" class="launcher-content">
+            <h1>Minecraft Java Edition</h1>
+            <button onclick="launchGame()">Play</button>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-content" class="settings">
+            <h1>Settings</h1>
+            <div class="settings-content">
+                <label for="username">Change Username</label>
+                <input type="text" id="username" placeholder="Enter new username">
+
+                <label for="profile-pic-input">Change Profile Picture</label>
+                <input type="text" id="profile-pic-input" placeholder="Enter profile picture URL">
+
+                <button onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        const minecraftTab = document.getElementById('minecraft-tab');
+        const settingsTab = document.getElementById('settings-tab');
+        const minecraftContent = document.getElementById('minecraft-content');
+        const settingsContent = document.getElementById('settings-content');
+
+        minecraftTab.onclick = function () {
+            settingsContent.style.display = 'none';
+            minecraftContent.style.display = 'flex';
+        };
+
+        settingsTab.onclick = function () {
+            minecraftContent.style.display = 'none';
+            settingsContent.style.display = 'block';
+        };
+
+        // Save settings (username and profile picture)
+        function saveSettings() {
+            const username = document.getElementById('username').value;
+            const profilePicUrl = document.getElementById('profile-pic-input').value;
+            
+            if (username) {
+                alert('Username changed to: ' + username);
+            }
+
+            if (profilePicUrl) {
+                document.getElementById('profile-pic').src = profilePicUrl;
+                alert('Profile picture updated.');
+            }
+        }
+
+        // Game launch function (opens in a new window)
+        function launchGame() {
+            const version = '1.8';  // You can dynamically change this based on the version
+            const gameUrl = `https://jlauncher.netlify.app/clients/${version}/`;
+            window.open(gameUrl, '_blank');
+        }
+    </script>
+
+</body>
+</html>
