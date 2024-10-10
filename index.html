@@ -68,15 +68,18 @@
             text-align: center;
             width: 100%;
         }
-        .play-section select {
+        .play-section select, .play-section button {
             margin: 10px 0;
             padding: 10px;
             border-radius: 4px;
             border: 1px solid #ccc;
             width: 50%;
         }
+        .play-section select {
+            background-color: grey;
+            color: white;
+        }
         .play-section button {
-            padding: 15px;
             background-color: #4CAF50;
             border: none;
             color: white;
@@ -85,12 +88,39 @@
             border-radius: 4px;
             margin-top: 10px;
         }
+        .play-section button:hover {
+            background-color: #45a049;
+        }
         .play-section button {
             position: relative;
             top: -20px; /* Makes the top half inside the image */
         }
         .upload-section {
             margin: 20px;
+        }
+        .upload-section input[type="file"] {
+            display: none;
+        }
+        .upload-section label {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .save-button {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4CAF50; /* Green for Save Settings button */
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        .save-button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -109,8 +139,9 @@
             <div class="play-section">
                 <select id="versionSelector">
                     <option value="LV">Latest</option>
-                    <option value="1.8.8">1.16</option>
-                    <option value="1.5.2">1.18</option>
+                    <option value="1.9.4">1.9.4</option>
+                    <option value="1.8.8">1.8.8</option>
+                    <option value="1.5.2">1.5.2</option>
                 </select>
                 <button onclick="launchGame()">Play</button>
             </div>
@@ -121,39 +152,43 @@
             <div class="upload-section">
                 <p>Change Profile Picture:</p>
                 <input type="file" id="profileImageInput" accept="image/*" onchange="previewImage(event)">
+                <label for="profileImageInput">Upload</label>
                 <p>Change Username:</p>
-                <input type="text" id="usernameInput" placeholder="Enter new username" oninput="changeUsername()">
+                <input type="text" id="usernameInput" placeholder="Enter Username">
             </div>
+            <button class="save-button" onclick="saveSettings()">Save Settings</button>
         </div>
     </div>
 
     <script>
         function showPage(page) {
-            document.getElementById('java').style.display = (page === 'java') ? 'flex' : 'none';
-            document.getElementById('settings').style.display = (page === 'settings') ? 'block' : 'none';
+            document.getElementById('java').style.display = 'none';
+            document.getElementById('settings').style.display = 'none';
+            document.getElementById(page).style.display = 'block';
         }
 
         function previewImage(event) {
             const reader = new FileReader();
-            reader.onload = function(){
-                const profilePic = document.getElementById('profilePic');
-                profilePic.src = reader.result;
+            reader.onload = function () {
+                document.getElementById('profilePic').src = reader.result;
             }
             reader.readAsDataURL(event.target.files[0]);
         }
 
-        function changeUsername() {
-            const usernameInput = document.getElementById('usernameInput').value;
-            const usernameDisplay = document.getElementById('username');
-            usernameDisplay.innerText = usernameInput || 'Default User';
+        function saveSettings() {
+            const username = document.getElementById('usernameInput').value;
+            if (username) {
+                document.getElementById('username').innerText = username;
+            }
+            alert('Settings saved!');
         }
 
         function launchGame() {
-            const version = document.getElementById('versionSelector').value;
-            window.open(`https://jlauncher.netlify.app/clients/${version}/`, '_blank');
+            const selectedVersion = document.getElementById('versionSelector').value;
+            window.open(`https://jlauncher.netlify.app/clients/${selectedVersion}/`, '_blank');
         }
 
-        // Initialize default page
+        // Initialize Java page as default
         showPage('java');
     </script>
 
