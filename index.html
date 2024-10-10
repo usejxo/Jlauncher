@@ -41,23 +41,41 @@
         }
         .content {
             margin-left: 200px;
-            padding: 20px;
+            padding: 0;
+            min-height: 100vh;
         }
         .settings {
             display: none;
+            padding: 20px;
         }
         .launcher-content {
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            height: 80vh;
+            height: 100vh;
             position: relative;
+            background-image: url('https://jlauncher.netlify.app/images/java/display.png');
+            background-size: cover;
+            background-position: center;
         }
         .launcher-content h1 {
             margin-top: 0;
         }
-        .launcher-content button {
+        .play-section {
+            position: absolute;
+            bottom: 50px;
+            text-align: center;
+            width: 100%;
+        }
+        .play-section select {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 50%;
+        }
+        .play-section button {
             padding: 15px;
             background-color: #4CAF50;
             border: none;
@@ -67,23 +85,9 @@
             border-radius: 4px;
             margin-top: 10px;
         }
-        .launcher-content select {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            width: 50%;
-        }
-        .launcher-content p {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        .version-selector-container {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
+        .play-section button {
+            position: relative;
+            top: -20px; /* Makes the top half inside the image */
         }
         .upload-section {
             margin: 20px;
@@ -93,7 +97,7 @@
 <body>
 
     <div class="sidebar">
-        <img id="profilePic" src="https://jlauncher.netlify.app/images/java/display.png" alt="Profile Picture">
+        <img id="profilePic" src="https://jlauncher.netlify.app/images/default/user/icon.png" alt="Profile Picture">
         <p id="username">Default User</p>
         <a href="javascript:void(0)" onclick="showPage('java')">Minecraft: Java Edition</a>
         <a href="javascript:void(0)" onclick="showPage('settings')">Settings</a>
@@ -102,12 +106,14 @@
     <div class="content">
         <div id="java" class="launcher-content">
             <h1>Minecraft: Java Edition</h1>
-            <select id="versionSelector">
-                <option value="LV">Latest Version</option>
-                <option value="1.8.8">1.8.8</option>
-                <option value="1.5.2">1.5.2</option>
-            </select>
-            <button onclick="launchGame()">Play</button>
+            <div class="play-section">
+                <select id="versionSelector">
+                    <option value="LV">Latest</option>
+                    <option value="1.8.8">1.16</option>
+                    <option value="1.5.2">1.18</option>
+                </select>
+                <button onclick="launchGame()">Play</button>
+            </div>
         </div>
 
         <div id="settings" class="settings">
@@ -123,7 +129,7 @@
 
     <script>
         function showPage(page) {
-            document.getElementById('java').style.display = (page === 'java') ? 'block' : 'none';
+            document.getElementById('java').style.display = (page === 'java') ? 'flex' : 'none';
             document.getElementById('settings').style.display = (page === 'settings') ? 'block' : 'none';
         }
 
