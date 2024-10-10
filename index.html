@@ -50,6 +50,11 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            height: 80vh; /* Adjust this for the content area height */
+            position: relative;
+        }
+        .launcher-content h1 {
+            margin-top: 0;
         }
         .launcher-content button {
             padding: 15px;
@@ -59,6 +64,22 @@
             cursor: pointer;
             font-size: 16px;
             border-radius: 4px;
+            margin-top: 10px;
+        }
+        .launcher-content input {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 50%;
+        }
+        .version-selector-container {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .settings-content input {
             margin: 10px 0;
@@ -92,7 +113,12 @@
         <!-- Minecraft Java Edition Launcher -->
         <div id="minecraft-content" class="launcher-content">
             <h1>Minecraft Java Edition</h1>
-            <button onclick="launchGame()">Play</button>
+            
+            <!-- Version Selector and Play Button placed toward the bottom -->
+            <div class="version-selector-container">
+                <input type="text" id="version-input" placeholder="Enter version (e.g., 1.8)" />
+                <button onclick="launchGame()">Play</button>
+            </div>
         </div>
 
         <!-- Settings -->
@@ -117,38 +143,40 @@
         const minecraftContent = document.getElementById('minecraft-content');
         const settingsContent = document.getElementById('settings-content');
 
-        minecraftTab.onclick = function () {
-            settingsContent.style.display = 'none';
+        minecraftTab.addEventListener('click', () => {
             minecraftContent.style.display = 'flex';
-        };
+            settingsContent.style.display = 'none';
+        });
 
-        settingsTab.onclick = function () {
-            minecraftContent.style.display = 'none';
+        settingsTab.addEventListener('click', () => {
             settingsContent.style.display = 'block';
-        };
+            minecraftContent.style.display = 'none';
+        });
 
-        // Save settings (username and profile picture)
+        // Placeholder function to launch game
+        function launchGame() {
+            const version = document.getElementById('version-input').value;
+            if (version) {
+                // Here you can add the game launch logic
+                alert(`Launching game version ${version}`);
+                window.open(`https://jlauncher.netlify.app/clients/${version}/`);
+            } else {
+                alert('Please enter a valid version.');
+            }
+        }
+
+        // Placeholder function to save settings
         function saveSettings() {
             const username = document.getElementById('username').value;
-            const profilePicUrl = document.getElementById('profile-pic-input').value;
-            
+            const profilePic = document.getElementById('profile-pic-input').value;
             if (username) {
-                alert('Username changed to: ' + username);
+                alert(`Username changed to ${username}`);
             }
-
-            if (profilePicUrl) {
-                document.getElementById('profile-pic').src = profilePicUrl;
+            if (profilePic) {
+                document.getElementById('profile-pic').src = profilePic;
                 alert('Profile picture updated.');
             }
         }
-
-        // Game launch function (opens in a new window)
-        function launchGame() {
-            const version = '1.8';  // You can dynamically change this based on the version
-            const gameUrl = `https://jlauncher.netlify.app/clients/${version}/`;
-            window.open(gameUrl, '_blank');
-        }
     </script>
-
 </body>
 </html>
