@@ -26,6 +26,7 @@
             margin: 20px auto;
             width: 100px;
             height: 100px;
+            object-fit: cover;
         }
         .sidebar a {
             padding: 15px 20px;
@@ -50,7 +51,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            height: 80vh; /* Adjust this for the content area height */
+            height: 80vh;
             position: relative;
         }
         .launcher-content h1 {
@@ -66,117 +67,89 @@
             border-radius: 4px;
             margin-top: 10px;
         }
-        .launcher-content input {
+        .launcher-content select {
             margin: 10px 0;
             padding: 10px;
             border-radius: 4px;
             border: 1px solid #ccc;
             width: 50%;
         }
+        .launcher-content p {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
         .version-selector-container {
             position: absolute;
             bottom: 20px;
             width: 100%;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
         }
-        .settings-content input {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            width: 100%;
-        }
-        .settings-content button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 4px;
+        .upload-section {
+            margin: 20px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
     <div class="sidebar">
-        <img id="profile-pic" src="https://jlauncher.netlify.app/images/default/profileimg.png" alt="Profile Picture">
-        <a href="#" id="minecraft-tab">Minecraft Java Edition</a>
-        <a href="#" id="settings-tab">Settings</a>
+        <img id="profilePic" src="https://jlauncher.netlify.app/images/java/display.png" alt="Profile Picture">
+        <p id="username">Default User</p>
+        <a href="javascript:void(0)" onclick="showPage('java')">Minecraft: Java Edition</a>
+        <a href="javascript:void(0)" onclick="showPage('settings')">Settings</a>
     </div>
 
-    <!-- Main Content -->
     <div class="content">
-        <!-- Minecraft Java Edition Launcher -->
-        <div id="minecraft-content" class="launcher-content">
-            <h1>Minecraft Java Edition</h1>
-            
-            <!-- Version Selector and Play Button placed toward the bottom -->
-            <div class="version-selector-container">
-                <input type="text" id="version-input" placeholder="Enter version (e.g., 1.8)" />
-                <button onclick="launchGame()">Play</button>
-            </div>
+        <div id="java" class="launcher-content">
+            <h1>Minecraft: Java Edition</h1>
+            <select id="versionSelector">
+                <option value="LV">Latest Version</option>
+                <option value="1.8.8">1.8.8</option>
+                <option value="1.5.2">1.5.2</option>
+            </select>
+            <button onclick="launchGame()">Play</button>
         </div>
 
-        <!-- Settings -->
-        <div id="settings-content" class="settings">
-            <h1>Settings</h1>
-            <div class="settings-content">
-                <label for="username">Change Username</label>
-                <input type="text" id="username" placeholder="Enter new username">
-
-                <label for="profile-pic-input">Change Profile Picture</label>
-                <input type="text" id="profile-pic-input" placeholder="Enter profile picture URL">
-
-                <button onclick="saveSettings()">Save Settings</button>
+        <div id="settings" class="settings">
+            <h2>Settings</h2>
+            <div class="upload-section">
+                <p>Change Profile Picture:</p>
+                <input type="file" id="profileImageInput" accept="image/*" onchange="previewImage(event)">
+                <p>Change Username:</p>
+                <input type="text" id="usernameInput" placeholder="Enter new username" oninput="changeUsername()">
             </div>
         </div>
     </div>
 
     <script>
-        // Tab switching
-        const minecraftTab = document.getElementById('minecraft-tab');
-        const settingsTab = document.getElementById('settings-tab');
-        const minecraftContent = document.getElementById('minecraft-content');
-        const settingsContent = document.getElementById('settings-content');
+        function showPage(page) {
+            document.getElementById('java').style.display = (page === 'java') ? 'block' : 'none';
+            document.getElementById('settings').style.display = (page === 'settings') ? 'block' : 'none';
+        }
 
-        minecraftTab.addEventListener('click', () => {
-            minecraftContent.style.display = 'flex';
-            settingsContent.style.display = 'none';
-        });
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const profilePic = document.getElementById('profilePic');
+                profilePic.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
 
-        settingsTab.addEventListener('click', () => {
-            settingsContent.style.display = 'block';
-            minecraftContent.style.display = 'none';
-        });
+        function changeUsername() {
+            const usernameInput = document.getElementById('usernameInput').value;
+            const usernameDisplay = document.getElementById('username');
+            usernameDisplay.innerText = usernameInput || 'Default User';
+        }
 
-        // Placeholder function to launch game
         function launchGame() {
-            const version = document.getElementById('version-input').value;
-            if (version) {
-                // Here you can add the game launch logic
-                alert(`Launching game version ${version}`);
-                window.open(`https://jlauncher.netlify.app/clients/${version}/`);
-            } else {
-                alert('Please enter a valid version.');
-            }
+            const version = document.getElementById('versionSelector').value;
+            window.open(`https://jlauncher.netlify.app/clients/${version}/`, '_blank');
         }
 
-        // Placeholder function to save settings
-        function saveSettings() {
-            const username = document.getElementById('username').value;
-            const profilePic = document.getElementById('profile-pic-input').value;
-            if (username) {
-                alert(`Username changed to ${username}`);
-            }
-            if (profilePic) {
-                document.getElementById('profile-pic').src = profilePic;
-                alert('Profile picture updated.');
-            }
-        }
+        // Initialize default page
+        showPage('java');
     </script>
+
 </body>
 </html>
