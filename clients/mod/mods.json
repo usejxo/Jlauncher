@@ -1,0 +1,17 @@
+{
+    "mods": [
+      {
+        "name": "Example Mod",
+        "image": "https://example.com/modimage1.png",
+        "description": "This is an example mod.",
+        "url": "https://jlauncher.netlify.app/clients/mod/?Mod=ExampleMod.js"
+      },
+      {
+        "name": "WorldEdit",
+        "image": "https://example.com/modimage2.png",
+        "description": "Edit the word around you.",
+        "url": "https://jlauncher.netlify.app/clients/mod/?Mod=WorldEdit.js"
+      }
+    ]
+  }
+  
