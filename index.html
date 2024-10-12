@@ -128,15 +128,20 @@
         }
         .install-button {
             padding: 10px;
-            background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
             border-radius: 4px;
             margin-top: 10px;
         }
+        .install-button.install {
+            background-color: #4CAF50; /* Green for Install */
+        }
+        .install-button.uninstall {
+            background-color: red; /* Red for Uninstall */
+        }
         .install-button:hover {
-            background-color: #45a049;
+            opacity: 0.9; /* Slightly dim the button on hover */
         }
     </style>
 </head>
@@ -248,19 +253,29 @@
                             <img src="${mod.image}" alt="${mod.name}">
                             <h3>${mod.name}</h3>
                             <p>${mod.description}</p>
-                            <button class="install-button" onclick="installMod('${mod.name}', '${mod.url}')">Install</button>
+                            <button class="install-button install" id="button-${mod.name}" onclick="toggleMod('${mod.name}')">Install</button>
                         `;
                         modList.appendChild(modCard);
                     });
                 });
         }
 
-        function installMod(name) {
-            if (installedMod) {
-                alert(`Uninstall ${installedMod} first before installing another mod.`);
-                return;
+        function toggleMod(name) {
+            const button = document.getElementById(`button-${name}`);
+            if (installedMod === name) {
+                uninstallMod();
+                button.classList.remove('uninstall');
+                button.classList.add('install');
+                button.textContent = 'Install';
+            } else {
+                installMod(name);
+                button.classList.remove('install');
+                button.classList.add('uninstall');
+                button.textContent = 'Uninstall';
             }
+        }
 
+        function installMod(name) {
             installedMod = name;
             const versionSelector = document.getElementById('versionSelector');
             const forgeOption = document.createElement('option');
