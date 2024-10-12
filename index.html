@@ -3,202 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eaglercraft Launcher</title>
+    <title>Eaglercraft Launcher with Mods</title>
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: white;
-        }
-        .sidebar {
-            background-color: #111;
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar img {
-            border-radius: 50%;
-            margin: 20px auto;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-        }
-        .sidebar a {
-            padding: 15px 20px;
-            text-decoration: none;
-            color: white;
-            text-align: left;
-            display: block;
-            font-size: 16px;
-        }
-        .sidebar a:hover {
-            background-color: #333;
-        }
-        .content {
-            margin-left: 200px;
-            padding: 0;
-            min-height: 100vh;
-        }
-        .settings {
-            display: none;
-            padding: 20px;
-        }
-        .launcher-content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-        }
-        .play-section {
-            position: absolute;
-            bottom: 50px;
-            text-align: center;
-            width: 100%;
-        }
-        .play-section select, .play-section button {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            width: 50%;
-        }
-        .play-section select {
-            background-color: grey;
-            color: white;
-        }
-        .play-section button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        .play-section button:hover {
-            background-color: #45a049;
-        }
-        .play-section button {
-            position: relative;
-            top: -20px; /* Keeps the play button half inside the background image */
-        }
-        .upload-section {
-            margin: 20px;
-        }
-        .upload-section input[type="file"] {
-            display: none;
-        }
-        .upload-section label {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .save-button {
-            display: block;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #4CAF50; /* Green for Save Settings button */
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 4px;
-        }
-        .save-button:hover {
-            background-color: #45a049;
-        }
+        body { margin: 0; font-family: Arial, sans-serif; background-color: #1e1e1e; color: white; }
+        .sidebar { background-color: #111; width: 200px; height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; }
+        .sidebar a { padding: 15px 20px; text-decoration: none; color: white; display: block; }
+        .sidebar a:hover { background-color: #333; }
+        .content { margin-left: 200px; padding: 0; min-height: 100vh; }
+        .launcher-content { display: none; justify-content: center; align-items: center; flex-direction: column; }
+        .play-section, .mod-section { text-align: center; }
+        .mod-section { padding: 20px; }
+        .mod { border: 1px solid white; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+        .mod img { width: 100px; height: 100px; }
+        .mod button { padding: 10px; border: none; color: white; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .install-button { background-color: #4CAF50; }
+        .uninstall-button { background-color: #f44336; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <img id="profilePic" src="https://jlauncher.netlify.app/images/default/user/icon.png" alt="Profile Picture">
-        <p id="username">Default User</p>
         <a href="javascript:void(0)" onclick="showPage('java')">Minecraft: Java Edition</a>
         <a href="javascript:void(0)" onclick="showPage('bedrock')">Minecraft: Bedrock Edition</a>
+        <a href="javascript:void(0)" onclick="showPage('mods')">Mods</a>
         <a href="javascript:void(0)" onclick="showPage('settings')">Settings</a>
     </div>
 
     <div class="content">
-        <div id="java" class="launcher-content" style="background-image: url('https://jlauncher.netlify.app/images/java/display.png');">
+        <!-- Java Edition Content -->
+        <div id="java" class="launcher-content" style="display: block;">
+            <h2>Minecraft: Java Edition</h2>
             <div class="play-section">
                 <select id="versionSelector">
-                    <option value="1.8">1.8</option>
-                    <option value="1.16">1.16</option>
-                    <option value="1.18">1.18</option>
-                    <option value="1.20">1.20</option>
+                    <option value="LV">Latest</option>
+                    <option value="1.9.4">1.9.4</option>
+                    <option value="1.8.8">1.8.8</option>
+                    <option value="1.5.2">1.5.2</option>
                 </select>
                 <button onclick="launchGame('java')">Play</button>
             </div>
         </div>
 
-        <div id="bedrock" class="launcher-content" style="display: none; background-image: url('https://jlauncher.netlify.app/images/bedrock/display.png');">
+        <!-- Bedrock Edition Content -->
+        <div id="bedrock" class="launcher-content" style="display: none;">
+            <h2>Minecraft: Bedrock Edition</h2>
             <div class="play-section">
+                <img src="https://jlauncher.netlify.app/images/bedrock/display.png" alt="Bedrock Display">
                 <button onclick="launchGame('bedrock')">Play</button>
             </div>
         </div>
 
-        <div id="settings" class="settings" style="display: none;">
+        <!-- Mods Content -->
+        <div id="mods" class="launcher-content mod-section" style="display: none;">
+            <h2>Mods</h2>
+            <div id="modsContainer"></div>
+        </div>
+
+        <!-- Settings Content -->
+        <div id="settings" class="launcher-content" style="display: none;">
             <h2>Settings</h2>
-            <div class="upload-section">
-                <p>Change Profile Picture:</p>
-                <input type="file" id="profileImageInput" accept="image/*" onchange="previewImage(event)">
-                <label for="profileImageInput">Upload</label>
-                <p>Change Username:</p>
-                <input type="text" id="usernameInput" placeholder="Enter Username">
-            </div>
-            <button class="save-button" onclick="saveSettings()">Save Settings</button>
+            <label>Username: <input type="text" id="username" value="Default User"></label>
+            <br>
+            <label>Profile Picture: <input type="file" id="profilePic" name="profilePic"></label>
+            <br>
+            <button onclick="saveSettings()">Save Settings</button>
         </div>
     </div>
 
     <script>
+        let installedMod = null;
+
         function showPage(page) {
             document.getElementById('java').style.display = 'none';
             document.getElementById('bedrock').style.display = 'none';
+            document.getElementById('mods').style.display = 'none';
             document.getElementById('settings').style.display = 'none';
             document.getElementById(page).style.display = 'block';
         }
 
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function () {
-                document.getElementById('profilePic').src = reader.result;
+        function loadMods() {
+            fetch('/clients/mod/mods.json') // Replace with your mods JSON URL
+                .then(response => response.json())
+                .then(data => {
+                    const modsContainer = document.getElementById('modsContainer');
+                    data.mods.forEach(mod => {
+                        const modElement = document.createElement('div');
+                        modElement.classList.add('mod');
+                        modElement.innerHTML = `
+                            <img src="${mod.image}" alt="${mod.name}">
+                            <h3>${mod.name}</h3>
+                            <button class="install-button" onclick="installMod('${mod.name}', this)">Install</button>
+                        `;
+                        modsContainer.appendChild(modElement);
+                    });
+                });
+        }
+
+        function installMod(modName, button) {
+            if (installedMod) {
+                alert("Please uninstall the current mod before installing another.");
+                return;
             }
-            reader.readAsDataURL(event.target.files[0]);
+            installedMod = modName;
+            document.getElementById('versionSelector').innerHTML += `<option value="Forge 1.8.8">Forge 1.8.8</option>`;
+            button.textContent = "Uninstall";
+            button.classList.remove("install-button");
+            button.classList.add("uninstall-button");
+            button.onclick = () => uninstallMod(modName, button);
+        }
+
+        function uninstallMod(modName, button) {
+            installedMod = null;
+            document.querySelector(`option[value="Forge 1.8.8"]`).remove();
+            button.textContent = "Install";
+            button.classList.remove("uninstall-button");
+            button.classList.add("install-button");
+            button.onclick = () => installMod(modName, button);
+        }
+
+        function launchGame(edition) {
+            const version = document.getElementById('versionSelector').value;
+            if (edition === 'java') {
+                const url = version === 'Forge 1.8.8' && installedMod ? 
+                    `https://jlauncher.netlify.app/clients/mod/?Mod=${installedMod}.js` : 
+                    `https://jlauncher.netlify.app/clients/${version}/`;
+                window.open(url);
+            } else if (edition === 'bedrock') {
+                window.open('https://jlauncher.netlify.app/clients/bedrock');
+            }
         }
 
         function saveSettings() {
-            const username = document.getElementById('usernameInput').value;
-            if (username) {
-                document.getElementById('username').innerText = username;
-            }
-            alert('Settings saved!');
+            const username = document.getElementById('username').value;
+            alert(`Settings saved: Username - ${username}`);
         }
 
-        function launchGame(type) {
-            let url;
-            if (type === 'java') {
-                const selectedVersion = document.getElementById('versionSelector').value;
-                url = `https://jlauncher.netlify.app/clients/${selectedVersion}/`;
-            } else if (type === 'bedrock') {
-                url = 'https://jlauncher.netlify.app/clients/bedrock/';
-            }
-            window.open(url, '_blank');
+        window.onload = function() {
+            loadMods();
         }
-
-        // Initialize Java page as default
-        showPage('java');
     </script>
 
 </body>
