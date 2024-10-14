@@ -1,17 +1,16 @@
 {
-    "mods": [
+  "mods": [
       {
-        "name": "Example Mod",
-        "image": "https://example.com/modimage1.png",
-        "description": "This is an example mod.",
-        "url": "https://jlauncher.netlify.app/clients/mod/?Mod=ExampleMod.js"
+          "name": "Example Mod",
+          "description": "An example mod for demonstration.",
+          "image": "https://example.com/image.png",
+          "type": "l"
       },
       {
-        "name": "WorldEdit",
-        "image": "https://example.com/modimage2.png",
-        "description": "Edit the word around you.",
-        "url": "https://jlauncher.netlify.app/clients/mod/?Mod=WorldEdit.js"
+          "name": "Non-Linkable Mod",
+          "description": "This mod cannot be launched via URL.",
+          "image": "https://example.com/image2.png",
+          "type": "d"
       }
-    ]
-  }
-  
+  ]
+}

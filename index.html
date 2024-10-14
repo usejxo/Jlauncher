@@ -44,10 +44,6 @@
             padding: 0;
             min-height: 100vh;
         }
-        .settings {
-            display: none;
-            padding: 20px;
-        }
         .launcher-content {
             display: flex;
             justify-content: center;
@@ -143,6 +139,40 @@
         .install-button:hover {
             opacity: 0.9; /* Slightly dim the button on hover */
         }
+        /* Custom Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-content {
+            background-color: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+            max-width: 400px;
+            width: 80%;
+        }
+        .popup-content h2 {
+            margin: 0 0 10px;
+        }
+        .popup-close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -193,6 +223,15 @@
         </div>
     </div>
 
+    <!-- Custom Popup -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="popup-close" onclick="closePopup()">&times;</span>
+            <h2>User Notice</h2>
+            <p id="popupMessage"></p>
+        </div>
+    </div>
+
     <script>
         let installedMod = null;
 
@@ -206,46 +245,27 @@
 
         function previewImage(event) {
             const reader = new FileReader();
-            reader.onload = function () {
-                document.getElementById('profilePic').src = reader.result;
+            reader.onload = function(){
+                const output = document.getElementById('profilePic');
+                output.src = reader.result;
             }
             reader.readAsDataURL(event.target.files[0]);
         }
 
         function saveSettings() {
-            const username = document.getElementById('usernameInput').value;
-            if (username) {
-                document.getElementById('username').innerText = username;
-            }
-            alert('Settings saved!');
-        }
-
-        function launchGame(type) {
-            if (type === 'java') {
-                const selectedVersion = document.getElementById('versionSelector').value;
-
-                // Check if "Forge 1.8.8" is selected
-                if (selectedVersion === 'Forge 1.8.8' && installedMod) {
-                    // Launch with the mod installed
-                    const modURL = `https://jlauncher.netlify.app/clients/mod/index.html/?Mods=${installedMod}.js`;
-                    window.open(modURL, '_blank');
-                } else {
-                    // Launch regular Java versions
-                    const url = `https://jlauncher.netlify.app/clients/${selectedVersion}/`;
-                    window.open(url, '_blank');
-                }
-            } else if (type === 'bedrock') {
-                const bedrockURL = 'https://jlauncher.netlify.app/clients/bedrock/';
-                window.open(bedrockURL, '_blank');
+            const newUsername = document.getElementById('usernameInput').value;
+            if (newUsername) {
+                document.getElementById('username').textContent = newUsername;
+                alert("Settings saved!");
             }
         }
 
         function fetchMods() {
-            fetch('/clients/mod/mods.json')
+            fetch('mods.json')
                 .then(response => response.json())
                 .then(data => {
                     const modList = document.getElementById('modList');
-                    modList.innerHTML = ''; // Clear existing mods
+                    modList.innerHTML = '';
                     data.mods.forEach(mod => {
                         const modCard = document.createElement('div');
                         modCard.classList.add('mod-card');
@@ -253,14 +273,14 @@
                             <img src="${mod.image}" alt="${mod.name}">
                             <h3>${mod.name}</h3>
                             <p>${mod.description}</p>
-                            <button class="install-button install" id="button-${mod.name}" onclick="toggleMod('${mod.name}')">Install</button>
+                            <button id="button-${mod.name}" class="install-button install" onclick="toggleMod('${mod.name}', '${mod.type}')">Install</button>
                         `;
                         modList.appendChild(modCard);
                     });
                 });
         }
 
-        function toggleMod(name) {
+        function toggleMod(name, type) {
             const button = document.getElementById(`button-${name}`);
             if (installedMod === name) {
                 uninstallMod();
@@ -268,10 +288,14 @@
                 button.classList.add('install');
                 button.textContent = 'Install';
             } else {
-                installMod(name);
-                button.classList.remove('install');
-                button.classList.add('uninstall');
-                button.textContent = 'Uninstall';
+                if (type === 'd') {
+                    showPopup('Mod does not work through URL downloading instead.');
+                } else {
+                    installMod(name);
+                    button.classList.remove('install');
+                    button.classList.add('uninstall');
+                    button.textContent = 'Uninstall';
+                }
             }
         }
 
@@ -298,6 +322,15 @@
             } else {
                 alert('No mod is currently installed.');
             }
+        }
+
+        function showPopup(message) {
+            document.getElementById('popupMessage').textContent = message;
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
         }
 
         // Fetch mods when the mods page is shown
