@@ -261,7 +261,7 @@
         }
 
         function fetchMods() {
-            fetch('mods.json')
+            fetch('clients/mod/mods.json')
                 .then(response => response.json())
                 .then(data => {
                     const modList = document.getElementById('modList');
