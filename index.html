@@ -45,7 +45,7 @@
             padding: 0;
             min-height: 100vh;
         }
-        .settings {
+        .settings, .mods-page {
             display: none;
             padding: 20px;
         }
@@ -88,6 +88,10 @@
         .play-section button:hover {
             background-color: #45a049;
         }
+        .play-section button {
+            position: relative;
+            top: -20px;
+        }
         .upload-section {
             margin: 20px;
         }
@@ -105,7 +109,7 @@
             display: block;
             margin-top: 20px;
             padding: 10px;
-            background-color: #4CAF50; /* Green for Save Settings button */
+            background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
@@ -117,52 +121,28 @@
         }
         .mod-card {
             background-color: #222;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .mod-card img {
-            max-width: 100%;
-            height: auto;
-        }
-        .install-button {
-            padding: 10px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .install-button.install {
-            background-color: #4CAF50; /* Green */
-        }
-        .install-button.uninstall {
-            background-color: red; /* Red */
-        }
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            justify-content: center;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
             align-items: center;
         }
-        .modal-content {
-            background-color: #fff;
-            color: black;
-            padding: 20px;
-            border-radius: 5px;
-            text-align: center;
+        .mod-card img {
+            width: 80px;
+            height: 80px;
+            margin-right: 20px;
+            border-radius: 8px;
         }
-        .close-modal {
+        .mod-card button {
+            background-color: #4CAF50;
+            padding: 10px 20px;
+            border: none;
+            color: white;
             cursor: pointer;
-            float: right;
-            color: red;
+            border-radius: 4px;
+        }
+        .mod-card button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -180,14 +160,13 @@
     <div class="content">
         <div id="java" class="launcher-content" style="background-image: url('https://jlauncher.netlify.app/images/java/display.png');">
             <div class="play-section">
-                <select id="versionSelector" onchange="checkForgeVersion()">
+                <select id="versionSelector">
                     <option value="1.8">1.8</option>
                     <option value="1.16">1.16</option>
                     <option value="1.18">1.18</option>
                     <option value="1.20">1.20</option>
-                    <option value="forge_1.8.8">Forge 1.8.8</option>
                 </select>
-                <button onclick="launchGame()">Play</button>
+                <button onclick="launchGame('java')">Play</button>
             </div>
         </div>
 
@@ -197,9 +176,9 @@
             </div>
         </div>
 
-        <div id="mods" class="launcher-content" style="display: none;">
-            <h2>Installed Mods</h2>
-            <div id="modList"></div>
+        <div id="mods" class="mods-page" style="display: none;">
+            <h2>Mods</h2>
+            <div id="modsContainer"></div>
         </div>
 
         <div id="settings" class="settings" style="display: none;">
@@ -215,102 +194,23 @@
         </div>
     </div>
 
-    <!-- Modal for user notices -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h2>User Notice</h2>
-            <p id="modalMessage"></p>
-        </div>
-    </div>
-
     <script>
-        let installedMod = null; // Variable to store the currently installed mod
-        const nonUrlCompatibleMods = []; // Array to store non-URL compatible mod names
+        let installedMod = null;
 
         function showPage(page) {
             document.getElementById('java').style.display = 'none';
             document.getElementById('bedrock').style.display = 'none';
-            document.getElementById('mods').style.display = 'none';
             document.getElementById('settings').style.display = 'none';
+            document.getElementById('mods').style.display = 'none';
             document.getElementById(page).style.display = 'block';
-
-            if (page === 'mods') {
-                fetchMods(); // Fetch mods when the mods page is shown
-            }
-        }
-
-        function fetchMods() {
-            fetch('/clients/mod/mods.json') // Ensure this path is correct
-                .then(response => response.json())
-                .then(data => {
-                    const modList = document.getElementById('modList');
-                    modList.innerHTML = ''; // Clear previous mods
-
-                    data.mods.forEach(mod => {
-                        const modCard = document.createElement('div');
-                        modCard.classList.add('mod-card');
-                        modCard.innerHTML = `
-                            <img src="${mod.image}" alt="${mod.name}">
-                            <h3>${mod.name}</h3>
-                            <p>${mod.description}</p>
-                            <button id="button-${mod.name}" class="install-button install" onclick="toggleMod('${mod.name}', '${mod.type}')">Install</button>
-                        `;
-                        modList.appendChild(modCard);
-                    });
-                });
-        }
-
-        function toggleMod(modName, modType) {
-            const button = document.getElementById(`button-${modName}`);
-
-            if (button.classList.contains('install')) {
-                installedMod = modName; // Set the installed mod
-                button.classList.remove('install');
-                button.classList.add('uninstall');
-                button.innerText = 'Uninstall';
-                if (modType === 'non-url') {
-                    nonUrlCompatibleMods.push(modName); // Add to non-URL compatible mods
-                    showModal(`${modName} installed. It is a non-URL compatible mod. A download will begin on launch.`);
-                } else {
-                    showModal(`${modName} installed.`);
-                }
-            } else {
-                installedMod = null; // Clear installed mod
-                button.classList.remove('uninstall');
-                button.classList.add('install');
-                button.innerText = 'Install';
-                if (modType === 'non-url') {
-                    const index = nonUrlCompatibleMods.indexOf(modName);
-                    if (index > -1) nonUrlCompatibleMods.splice(index, 1); // Remove from array
-                    showModal(`${modName} uninstalled.`);
-                }
-            }
-        }
-
-        function launchGame(version) {
-            if (installedMod) {
-                if (nonUrlCompatibleMods.length > 0) {
-                    // If any non-URL compatible mods are installed, redirect
-                    window.location.href = 'https://jxobfh.netlify.app/games/jlanch/f1.8.8injected/';
-                } else {
-                    // Launch the game normally
-                    alert(`Launching Minecraft ${version || 'Java Edition'}...`);
-                    // Here you would have your launch logic for the game
-                }
-            } else {
-                alert(`Launching Minecraft ${version || 'Java Edition'}...`);
-                // Here you would have your launch logic for the game
-            }
         }
 
         function previewImage(event) {
-            const file = event.target.files[0];
             const reader = new FileReader();
-            reader.onload = function() {
+            reader.onload = function () {
                 document.getElementById('profilePic').src = reader.result;
             }
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(event.target.files[0]);
         }
 
         function saveSettings() {
@@ -318,30 +218,75 @@
             if (username) {
                 document.getElementById('username').innerText = username;
             }
-            showModal('Settings saved!');
+            alert('Settings saved!');
         }
 
-        function showModal(message) {
-            document.getElementById('modalMessage').innerText = message;
-            document.getElementById('modal').style.display = 'flex';
+        function launchGame(type) {
+            let url;
+            if (type === 'java') {
+                const selectedVersion = document.getElementById('versionSelector').value;
+                url = `https://jlauncher.netlify.app/clients/${selectedVersion}/`;
+            } else if (type === 'bedrock') {
+                url = 'https://jlauncher.netlify.app/clients/bedrock/';
+            }
+            window.open(url, '_blank');
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
+        function fetchMods() {
+            fetch('/clients/mod/mods.json')
+                .then(response => response.json())
+                .then(data => {
+                    const modsContainer = document.getElementById('modsContainer');
+                    modsContainer.innerHTML = '';
+
+                    data.mods.forEach(mod => {
+                        const modCard = document.createElement('div');
+                        modCard.classList.add('mod-card');
+                        modCard.innerHTML = `
+                            <img src="${mod.image}" alt="${mod.name}">
+                            <div>
+                                <h3>${mod.name}</h3>
+                                <p>${mod.description}</p>
+                                <button onclick="installMod('${mod.name}', '${mod.url}')">Install</button>
+                            </div>
+                        `;
+                        modsContainer.appendChild(modCard);
+                    });
+                });
         }
 
-        function checkForgeVersion() {
-            const version = document.getElementById('versionSelector').value;
-            if (version === 'forge_1.8.8') {
-                if (nonUrlCompatibleMods.length > 0) {
-                    // Handle logic when Forge 1.8.8 is selected
-                    showModal('Warning: Non-URL compatible mods are installed. Redirecting on launch.');
+        function installMod(name, url) {
+            if (installedMod) {
+                alert(`Uninstall ${installedMod} first before installing another mod.`);
+                return;
+            }
+
+            installedMod = name;
+            const versionSelector = document.getElementById('versionSelector');
+            const forgeOption = document.createElement('option');
+            forgeOption.value = 'Forge 1.8.8';
+            forgeOption.textContent = 'Forge 1.8.8';
+            versionSelector.appendChild(forgeOption);
+            versionSelector.value = 'Forge 1.8.8';
+            alert(`${name} mod installed!`);
+        }
+
+        function uninstallMod() {
+            if (installedMod) {
+                installedMod = null;
+                const versionSelector = document.getElementById('versionSelector');
+                const forgeOption = document.querySelector('option[value="Forge 1.8.8"]');
+                if (forgeOption) {
+                    versionSelector.removeChild(forgeOption);
                 }
+                alert('Mod uninstalled!');
+            } else {
+                alert('No mod installed.');
             }
         }
 
-        // Initial page load
-        showPage('java');
+        fetchMods();
     </script>
+
 </body>
 </html>
