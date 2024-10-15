@@ -47,7 +47,9 @@
         }
         .settings, .mods-page {
             display: none;
-            padding: 20px;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
         }
         .launcher-content {
             display: flex;
@@ -92,32 +94,12 @@
             position: relative;
             top: -20px;
         }
-        .upload-section {
-            margin: 20px;
-        }
-        .upload-section input[type="file"] {
-            display: none;
-        }
-        .upload-section label {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .save-button {
-            display: block;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
+        /* Fullscreen iframe */
+        .mods-page iframe {
+            width: 100%;
+            height: 100%;
             border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 4px;
-        }
-        .save-button:hover {
-            background-color: #45a049;
+            display: block;
         }
     </style>
 </head>
@@ -152,7 +134,7 @@
         </div>
 
         <div id="mods" class="mods-page" style="display: none;">
-            <iframe src="/clients/forgeframe/index.html" width="100%" height="100%" style="border:none;"></iframe>
+            <iframe src="/clients/forgeframe/index.html"></iframe>
         </div>
 
         <div id="settings" class="settings" style="display: none;">
@@ -203,6 +185,7 @@
             }
             window.open(url, '_blank');
         }
+
     </script>
 
 </body>
