@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Mod1",
+        "image": "/modloader/images/mod1.png",
+        "description": "This is the first mod for Minecraft.",
+        "file": "/modloader/mods/Mod1.js"
+    },
+    {
+        "name": "Mod2",
+        "image": "/modloader/images/mod2.png",
+        "description": "This is the second mod for Minecraft.",
+        "file": "/modloader/mods/Mod2.js"
+    }
+]

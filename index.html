@@ -119,31 +119,6 @@
         .save-button:hover {
             background-color: #45a049;
         }
-        .mod-card {
-            background-color: #222;
-            padding: 20px;
-            margin: 10px 0;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-        }
-        .mod-card img {
-            width: 80px;
-            height: 80px;
-            margin-right: 20px;
-            border-radius: 8px;
-        }
-        .mod-card button {
-            background-color: #4CAF50;
-            padding: 10px 20px;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .mod-card button:hover {
-            background-color: #45a049;
-        }
     </style>
 </head>
 <body>
@@ -177,8 +152,7 @@
         </div>
 
         <div id="mods" class="mods-page" style="display: none;">
-            <h2>Mods</h2>
-            <div id="modsContainer"></div>
+            <iframe src="/clients/forgeframe/index.html" width="100%" height="100%" style="border:none;"></iframe>
         </div>
 
         <div id="settings" class="settings" style="display: none;">
@@ -195,8 +169,6 @@
     </div>
 
     <script>
-        let installedMod = null;
-
         function showPage(page) {
             document.getElementById('java').style.display = 'none';
             document.getElementById('bedrock').style.display = 'none';
@@ -231,61 +203,6 @@
             }
             window.open(url, '_blank');
         }
-
-        function fetchMods() {
-            fetch('/clients/mod/mods.json')
-                .then(response => response.json())
-                .then(data => {
-                    const modsContainer = document.getElementById('modsContainer');
-                    modsContainer.innerHTML = '';
-
-                    data.mods.forEach(mod => {
-                        const modCard = document.createElement('div');
-                        modCard.classList.add('mod-card');
-                        modCard.innerHTML = `
-                            <img src="${mod.image}" alt="${mod.name}">
-                            <div>
-                                <h3>${mod.name}</h3>
-                                <p>${mod.description}</p>
-                                <button onclick="installMod('${mod.name}', '${mod.url}')">Install</button>
-                            </div>
-                        `;
-                        modsContainer.appendChild(modCard);
-                    });
-                });
-        }
-
-        function installMod(name, url) {
-            if (installedMod) {
-                alert(`Uninstall ${installedMod} first before installing another mod.`);
-                return;
-            }
-
-            installedMod = name;
-            const versionSelector = document.getElementById('versionSelector');
-            const forgeOption = document.createElement('option');
-            forgeOption.value = 'Forge 1.8.8';
-            forgeOption.textContent = 'Forge 1.8.8';
-            versionSelector.appendChild(forgeOption);
-            versionSelector.value = 'Forge 1.8.8';
-            alert(`${name} mod installed!`);
-        }
-
-        function uninstallMod() {
-            if (installedMod) {
-                installedMod = null;
-                const versionSelector = document.getElementById('versionSelector');
-                const forgeOption = document.querySelector('option[value="Forge 1.8.8"]');
-                if (forgeOption) {
-                    versionSelector.removeChild(forgeOption);
-                }
-                alert('Mod uninstalled!');
-            } else {
-                alert('No mod installed.');
-            }
-        }
-
-        fetchMods();
     </script>
 
 </body>
