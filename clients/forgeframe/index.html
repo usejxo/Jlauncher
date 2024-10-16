@@ -257,24 +257,15 @@
             loadingScreen.style.display = 'flex'; // Show loading screen
             progressBar.style.width = '0%'; // Reset progress bar width
 
-            // Load mods and display loading progress
-            loadMods().then(() => {
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 10;
-                    progressBar.style.width = `${progress}%`;
+            // Simulate ForgeFrame loading time (10 seconds)
+            setTimeout(() => {
+                loadingScreen.style.display = 'none'; // Hide loading screen
+                launcherContainer.style.display = 'block'; // Show launcher container
+                gameFrame.style.display = 'block'; // Show the game iframe
 
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        setTimeout(() => {
-                            loadingScreen.style.display = 'none'; // Hide loading screen
-                            launcherContainer.style.display = 'block'; // Show launcher container
-                            gameFrame.style.display = 'block'; // Show the game iframe
-                            showMinecraftLoadingScreen();
-                        }, 500);
-                    }
-                }, 300);
-            });
+                // Show Minecraft loading screen
+                showMinecraftLoadingScreen();
+            }, 10000); // 10 seconds delay
         });
 
         // Show the Minecraft loading screen
