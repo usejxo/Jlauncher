@@ -85,20 +85,61 @@
         }
 
         #fullscreen {
-            background-color: #333; /* No green, neutral dark color */
+            font-size: 24px;
             color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 50%;
             cursor: pointer;
             position: absolute;
             top: 10px;
             right: 10px;
-            display: none; /* Hide until delay */
+            display: none; /* Hidden until delay */
         }
 
         #fullscreen:hover {
-            background-color: #f9a825; /* Turns orange when hovered */
+            color: #f9a825; /* Orange color when hovered */
+        }
+
+        /* Mod styles */
+        .mod-item {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .mod-item img {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        .mod-info {
+            flex-grow: 1;
+        }
+
+        .mod-info h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #f9a825;
+        }
+
+        .mod-info p {
+            margin: 5px 0;
+        }
+
+        .mod-info button {
+            background-color: #f9a825;
+            color: black;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .mod-info button:hover {
+            background-color: #e0a013;
         }
 
         /* Custom loading screen */
@@ -152,7 +193,7 @@
 <body>
 
     <div id="sidebar">
-        <img src="https://jlauncher.netlify.app/clients/forgeframe/images/icons/forge.png" alt="ForgeFrame Icon">
+        <img src="/images/icons/forge.png" alt="ForgeFrame Icon">
         <ul>
             <li><a id="mods-tab">Mods</a></li>
             <li><a id="game-tab">Game</a></li>
@@ -165,78 +206,82 @@
         <!-- Mods List -->
         <div id="mods-list"></div>
 
-        
+        <!-- Game Tab: Minecraft launcher -->
         <button id="minecraft" style="display:none;">Launch ForgeFrame</button>
 
         <div id="launcher-container" style="display:none;">
-            <iframe id="minecraft-iframe" src=""></iframe>
-            <button id="fullscreen">⛶</button>
+            <iframe id="game-frame" src="https://jefbf.netlify.app"></iframe>
+            <span id="fullscreen">⛶</span> <!-- Fullscreen icon -->
         </div>
-    </div>
 
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <img src="https://jlauncher.netlify.app/clients/forgeframe/images/icons/forge.png" alt="ForgeFrame Logo">
-        <div id="loading-bar">
-            <div id="loading-fill"></div>
+        <!-- Loading screen for Minecraft -->
+        <div id="loading-screen">
+            <img src="/images/icons/forge.png" alt="ForgeFrame Logo">
+            <div id="loading-bar">
+                <div id="loading-fill"></div>
+            </div>
         </div>
+
     </div>
 
     <script>
-        const modsTab = document.getElementById('mods-tab');
-        const gameTab = document.getElementById('game-tab');
-        const modsList = document.getElementById('mods-list');
-        const launchButton = document.getElementById('minecraft');
-        const iframeContainer = document.getElementById('launcher-container');
-        const minecraftIframe = document.getElementById('minecraft-iframe');
-        const fullscreenButton = document.getElementById('fullscreen');
+        const minecraftBtn = document.getElementById('minecraft');
+        const fullscreenIcon = document.getElementById('fullscreen');
+        const launcherContainer = document.getElementById('launcher-container');
         const loadingScreen = document.getElementById('loading-screen');
-        const loadingBar = document.getElementById('loading-fill');
 
-        // Tabs functionality
-        modsTab.addEventListener('click', () => {
-            modsList.style.display = 'block';
-            launchButton.style.display = 'none';
-            iframeContainer.style.display = 'none';
-        });
+        // Display mods list
+        fetch('https://jlauncher.netlify.app/clients/forgeframe/modloader/mods.json')
+            .then(response => response.json())
+            .then(mods => {
+                const modsList = document.getElementById('mods-list');
+                mods.forEach(mod => {
+                    const modElement = document.createElement('div');
+                    modElement.className = 'mod-item';
+                    modElement.innerHTML = `
+                        <img src="${mod.image}" alt="${mod.name}">
+                        <div class="mod-info">
+                            <h3>${mod.name}</h3>
+                            <p>${mod.description}</p>
+                            <button onclick="downloadMod('${mod.name}')">Download</button>
+                        </div>
+                    `;
+                    modsList.appendChild(modElement);
+                });
+            });
 
-        gameTab.addEventListener('click', () => {
-            modsList.style.display = 'none';
-            launchButton.style.display = 'inline-block';
-            iframeContainer.style.display = 'block';
-        });
+        function downloadMod(modName) {
+            const modUrl = `https://jlauncher.netlify.app/clients/forgeframe/modloader/mods/${modName}.js`;
+            const link = document.createElement('a');
+            link.href = modUrl;
+            link.download = `${modName}.js`;
+            link.click();
+        }
 
-        // Load the iframe and display container
-        launchButton.addEventListener('click', () => {
-            minecraftIframe.src = "https://jefbf.netlify.app"; // Load ForgeFrame iframe
-            iframeContainer.style.display = 'block'; // Show the iframe container
-            launchButton.style.display = 'none'; // Hide the launch button
+        // Launch ForgeFrame game
+        minecraftBtn.addEventListener('click', () => {
+            minecraftBtn.style.display = 'none';
+            launcherContainer.style.display = 'block';
 
-            // Show fullscreen button after 13 seconds
+            // Hide loading screen after assets load
             setTimeout(() => {
-                fullscreenButton.style.display = 'inline-block';
-            }, 13000);
+                loadingScreen.style.display = 'none';
+
+                // Show fullscreen icon after 10 seconds
+                setTimeout(() => {
+                    fullscreenIcon.style.display = 'inline';
+                }, 10000);
+            }, 13000); // Assuming Minecraft assets load in 13 seconds
         });
 
-        // Fullscreen functionality
-        fullscreenButton.addEventListener('click', () => {
-            if (minecraftIframe.requestFullscreen) {
-                minecraftIframe.requestFullscreen(); // Standard browsers
-            } else if (minecraftIframe.mozRequestFullScreen) { // Firefox
-                minecraftIframe.mozRequestFullScreen();
-            } else if (minecraftIframe.webkitRequestFullscreen) { // Chrome, Safari and Opera
-                minecraftIframe.webkitRequestFullscreen();
-            } else if (minecraftIframe.msRequestFullscreen) { // IE/Edge
-                minecraftIframe.msRequestFullscreen();
+        // Fullscreen toggle
+        fullscreenIcon.addEventListener('click', () => {
+            const gameFrame = document.getElementById('game-frame');
+            if (gameFrame.requestFullscreen) {
+                gameFrame.requestFullscreen();
             }
         });
-
-        // Hide loading screen after assets have loaded
-        setTimeout(() => {
-            loadingScreen.style.display = 'none'; // Hide loading screen after animation completes
-        }, 12000); // Set this time to match the loading bar animation
     </script>
-
 </body>
 
 </html>
