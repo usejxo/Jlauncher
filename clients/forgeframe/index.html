@@ -12,6 +12,22 @@
             color: #ffffff;
             overflow: hidden;
         }
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(30, 30, 30, 0.9);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        #loading-text {
+            font-size: 24px;
+        }
         #sidebar {
             background-color: #292929;
             width: 250px;
@@ -121,6 +137,10 @@
 </head>
 <body>
 
+    <div id="loading-screen">
+        <div id="loading-text">Loading, please wait...</div>
+    </div>
+
     <div id="sidebar">
         <img src="https://jlauncher.netlify.app/clients/forgeframe/images/icons/forge.png" alt="ForgeFrame Icon">
         <ul>
@@ -129,7 +149,7 @@
         </ul>
     </div>
 
-    <div id="content">
+    <div id="content" style="display:none;">
         <h1>ForgeFrame - Minecraft Mods</h1>
 
         <!-- Mods List -->
@@ -152,6 +172,8 @@
         const launcherContainer = document.getElementById('launcher-container');
         const fullscreenButton = document.getElementById('fullscreen');
         const gameFrame = document.getElementById('game-frame');
+        const loadingScreen = document.getElementById('loading-screen');
+        const content = document.getElementById('content');
 
         // Function to load mods from JSON and display them
         async function loadMods() {
@@ -222,7 +244,10 @@
         });
 
         // Initially load mods on page load
-        loadMods();
+        loadMods().then(() => {
+            loadingScreen.style.display = 'none'; // Hide loading screen after mods are loaded
+            content.style.display = 'block'; // Show content after loading
+        });
     </script>
 </body>
 </html>
