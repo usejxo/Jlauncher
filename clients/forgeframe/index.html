@@ -174,22 +174,13 @@
         </div>
     </div>
 
-    <!-- Loading Screen for ForgeFrame -->
-    <div id="loading-screen" style="display:none;">
+    <!-- Loading Screen -->
+    <div id="loading-screen" style="display:flex;">
         <img id="loading-logo" src="https://jlauncher.netlify.app/clients/forgeframe/images/logo.png" alt="Loading Logo">
         <div id="progress">
             <div id="progress-bar"></div>
         </div>
         <p style="color: #ffffff;">Loading ForgeFrame...</p>
-    </div>
-
-    <!-- Loading Screen for Minecraft -->
-    <div id="minecraft-loading" style="display:none;">
-        <img id="loading-logo" src="https://jlauncher.netlify.app/clients/forgeframe/images/logo.png" alt="Loading Logo">
-        <div id="progress">
-            <div id="progress-bar"></div>
-        </div>
-        <p style="color: #ffffff;">Loading Minecraft...</p>
     </div>
 
     <script>
@@ -199,7 +190,6 @@
         const launchButton = document.getElementById('minecraft');
         const launcherContainer = document.getElementById('launcher-container');
         const loadingScreen = document.getElementById('loading-screen');
-        const minecraftLoadingScreen = document.getElementById('minecraft-loading');
         const progressBar = document.getElementById('progress-bar');
         const fullscreenButton = document.getElementById('fullscreen');
         const gameFrame = document.getElementById('game-frame');
@@ -257,36 +247,14 @@
             loadingScreen.style.display = 'flex'; // Show loading screen
             progressBar.style.width = '0%'; // Reset progress bar width
 
-            // Simulate ForgeFrame loading time (10 seconds)
+            // Simulate loading time (5 seconds)
             setTimeout(() => {
                 loadingScreen.style.display = 'none'; // Hide loading screen
                 launcherContainer.style.display = 'block'; // Show launcher container
                 gameFrame.style.display = 'block'; // Show the game iframe
-
-                // Show Minecraft loading screen
-                showMinecraftLoadingScreen();
-            }, 10000); // 10 seconds delay
+                fullscreenButton.style.display = 'block'; // Show fullscreen button
+            }, 5000); // 5 seconds delay
         });
-
-        // Show the Minecraft loading screen
-        function showMinecraftLoadingScreen() {
-            minecraftLoadingScreen.style.display = 'flex'; // Show Minecraft loading screen
-            progressBar.style.width = '0%'; // Reset progress bar width
-
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 10;
-                progressBar.style.width = `${progress}%`;
-
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        minecraftLoadingScreen.style.display = 'none'; // Hide Minecraft loading screen
-                        fullscreenButton.style.display = 'block'; // Show fullscreen button after Minecraft loads
-                    }, 500);
-                }
-            }, 300);
-        }
 
         // Request fullscreen when the button is clicked
         fullscreenButton.addEventListener('click', () => {
@@ -299,13 +267,6 @@
             } else if (gameFrame.msRequestFullscreen) { // IE/Edge
                 gameFrame.msRequestFullscreen();
             }
-        });
-
-        // Show fullscreen button after 10 seconds of launching Minecraft
-        launchButton.addEventListener('click', () => {
-            setTimeout(() => {
-                fullscreenButton.style.display = 'block'; // Show fullscreen button
-            }, 10000); // 10 seconds after launch button is clicked
         });
 
         // Initially load mods on page load
