@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -33,27 +32,15 @@ const librarySchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 const Library = mongoose.model('Library', librarySchema);
 
-// Function to authenticate user
-function authenticateToken(req, res, next) {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
-
 // Sign up route
 app.post('/signup', async (req, res) => {
   const { username, password } = req.body;
   try {
     const user = new User({ username, password });
     await user.save();
-    const token = jwt.sign({ username }, process.env.JWT_SECRET);
-    res.json({ token });
+    res.sendStatus(201); // Created
   } catch (error) {
+    console.error("Signup error:", error); // Log error
     res.status(400).json({ error: 'User already exists or invalid data' });
   }
 });
@@ -67,46 +54,61 @@ app.post('/login', async (req, res) => {
     return res.status(400).json({ error: 'Invalid credentials' });
   }
 
-  const token = jwt.sign({ username }, process.env.JWT_SECRET);
-  res.json({ token });
+  res.sendStatus(200); // OK
 });
 
 // Get user library
-app.get('/furnace-data', authenticateToken, async (req, res) => {
-  const userLibrary = await Library.findOne({ username: req.user.username }) || { mods: [] };
-  res.json(userLibrary.mods);
+app.get('/furnace-data', async (req, res) => {
+  const { username } = req.query; // Retrieve username from query
+  try {
+    const userLibrary = await Library.findOne({ username }) || { mods: [] };
+    res.json(userLibrary.mods);
+  } catch (error) {
+    console.error("Error fetching library data:", error); // Log error
+    res.sendStatus(500); // Internal Server Error
+  }
 });
 
 // Add mod to user library
-app.post('/add-mod', authenticateToken, async (req, res) => {
-  const { modName } = req.body;
-  let userLibrary = await Library.findOne({ username: req.user.username });
+app.post('/add-mod', async (req, res) => {
+  const { username, modName } = req.body; // Retrieve username and modName from body
+  try {
+    let userLibrary = await Library.findOne({ username });
 
-  if (!userLibrary) {
-    userLibrary = new Library({ username: req.user.username, mods: [] });
-  }
+    if (!userLibrary) {
+      userLibrary = new Library({ username, mods: [] });
+    }
 
-  if (!userLibrary.mods.includes(modName)) {
-    userLibrary.mods.push(modName);
-    await userLibrary.save();
-    res.sendStatus(200);
-  } else {
-    res.status(400).json({ error: 'Mod already in library' });
+    if (!userLibrary.mods.includes(modName)) {
+      userLibrary.mods.push(modName);
+      await userLibrary.save();
+      res.sendStatus(200);
+    } else {
+      res.status(400).json({ error: 'Mod already in library' });
+    }
+  } catch (error) {
+    console.error("Error adding mod:", error); // Log error
+    res.sendStatus(500); // Internal Server Error
   }
 });
 
 // Remove mod from user library
-app.post('/remove-mod', authenticateToken, async (req, res) => {
-  const { modName } = req.body;
-  const userLibrary = await Library.findOne({ username: req.user.username });
+app.post('/remove-mod', async (req, res) => {
+  const { username, modName } = req.body; // Retrieve username and modName from body
+  try {
+    const userLibrary = await Library.findOne({ username });
 
-  if (!userLibrary) {
-    return res.status(400).json({ error: 'Library does not exist' });
+    if (!userLibrary) {
+      return res.status(400).json({ error: 'Library does not exist' });
+    }
+
+    userLibrary.mods = userLibrary.mods.filter(mod => mod !== modName);
+    await userLibrary.save();
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error removing mod:", error); // Log error
+    res.sendStatus(500); // Internal Server Error
   }
-
-  userLibrary.mods = userLibrary.mods.filter(mod => mod !== modName);
-  await userLibrary.save();
-  res.sendStatus(200);
 });
 
 // Start the server
