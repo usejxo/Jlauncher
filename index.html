@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="images/icon/icon.png" type="image/png">
+    <link rel="icon" href="images/icon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eaglercraft Launcher</title>
     <style>
@@ -45,7 +45,7 @@
             padding: 0;
             min-height: 100vh;
         }
-        .settings, .mods-page {
+        .settings {
             display: none;
             padding: 0;
             height: 100vh;
@@ -90,27 +90,14 @@
         .play-section button:hover {
             background-color: #45a049;
         }
-        .play-section button {
-            position: relative;
-            top: -20px;
-        }
-        /* Fullscreen iframe */
-        .mods-page iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
     </style>
 </head>
 <body>
-
     <div class="sidebar">
         <img id="profilePic" src="https://jlauncher.netlify.app/images/default/user/icon.png" alt="Profile Picture">
         <p id="username">Default User</p>
         <a href="javascript:void(0)" onclick="showPage('java')">Minecraft: Java Edition</a>
         <a href="javascript:void(0)" onclick="showPage('bedrock')">Minecraft: Bedrock Edition</a>
-        <a href="javascript:void(0)" onclick="showPage('mods')">Mods</a>
         <a href="javascript:void(0)" onclick="showPage('settings')">Settings</a>
     </div>
 
@@ -120,7 +107,7 @@
                 <select id="versionSelector">
                     <option value="LV">Latest</option>
                     <option value="1.9.4">1.9.4</option>
-                    <option value="1.8.8">1.8.</option>
+                    <option value="1.8.8">1.8.8</option>
                     <option value="1.5.2">1.5.2</option>
                 </select>
                 <button onclick="launchGame('java')">Play</button>
@@ -131,10 +118,6 @@
             <div class="play-section">
                 <button onclick="launchGame('bedrock')">Play</button>
             </div>
-        </div>
-
-        <div id="mods" class="mods-page" style="display: none;">
-            <iframe src="/clients/forgeframe/index.html"></iframe>
         </div>
 
         <div id="settings" class="settings" style="display: none;">
@@ -155,7 +138,6 @@
             document.getElementById('java').style.display = 'none';
             document.getElementById('bedrock').style.display = 'none';
             document.getElementById('settings').style.display = 'none';
-            document.getElementById('mods').style.display = 'none';
             document.getElementById(page).style.display = 'block';
         }
 
@@ -179,14 +161,12 @@
             let url;
             if (type === 'java') {
                 const selectedVersion = document.getElementById('versionSelector').value;
-                url = `https://jlauncher.netlify.app/clients/${selectedVersion}/`;
+                url = `https://jlauncher.netlify.app/clients/${selectedVersion}`;
             } else if (type === 'bedrock') {
                 url = 'https://jlauncher.netlify.app/clients/bedrock/';
             }
             window.open(url, '_blank');
         }
-
     </script>
-
 </body>
 </html>
