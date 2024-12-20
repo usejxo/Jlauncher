@@ -27,18 +27,19 @@
         .sidebar img {
             border-radius: 50%;
             margin: 20px auto;
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             object-fit: cover;
             cursor: pointer;
         }
         .sidebar a {
-            padding: 15px 20px;
+            padding: 20px 25px;
             text-decoration: none;
             color: white;
             display: block;
             width: 100%;
             text-align: center;
+            font-size: 16px;
         }
         .sidebar a:hover {
             background-color: #333;
@@ -59,10 +60,11 @@
         }
         .play-section select, .play-section button {
             margin: 10px 0;
-            padding: 10px;
-            border-radius: 4px;
+            padding: 15px;
+            border-radius: 6px;
             border: 1px solid #ccc;
-            width: 50%;
+            width: 60%;
+            font-size: 16px;
         }
         .play-section select {
             background-color: #555;
@@ -75,6 +77,29 @@
             cursor: pointer;
         }
         .play-section button:hover {
+            background-color: #45a049;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+        .notification button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .notification button:hover {
             background-color: #45a049;
         }
     </style>
@@ -107,9 +132,15 @@
         </div>
     </div>
 
+    <div class="notification" id="setupNotification">
+        <p>Welcome! Set up your profile to get started:</p>
+        <button onclick="setupProfile()">Set Up Now</button>
+    </div>
+
     <script>
         const usernameEl = document.getElementById('username');
         const profilePicEl = document.getElementById('profilePic');
+        const notificationEl = document.getElementById('setupNotification');
 
         // Load stored profile info
         function loadProfile() {
@@ -122,6 +153,8 @@
 
             if (storedProfilePic) {
                 profilePicEl.src = storedProfilePic;
+            } else {
+                notificationEl.style.display = 'block';
             }
         }
 
@@ -173,6 +206,20 @@
                 ? `${baseUrl}${document.getElementById('versionSelector').value}`
                 : `${baseUrl}bedrock/`;
             window.open(url, '_blank');
+        }
+
+        // Setup profile from notification
+        function setupProfile() {
+            const newUsername = prompt('Enter your username:');
+
+            if (newUsername) {
+                usernameEl.textContent = newUsername;
+                localStorage.setItem('username', newUsername);
+            }
+
+            changeProfilePicture();
+
+            notificationEl.style.display = 'none';
         }
 
         // Load profile on startup
