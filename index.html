@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" href="images/icon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest/manifest.json">
     <title>Eaglercraft Launcher</title>
     <style>
         body {
@@ -30,7 +30,6 @@
             width: 120px;
             height: 120px;
             object-fit: cover;
-            cursor: pointer;
         }
         .sidebar a {
             padding: 20px 25px;
@@ -63,18 +62,26 @@
             padding: 15px;
             border-radius: 6px;
             border: 1px solid #ccc;
-            width: 60%;
             font-size: 16px;
+        }
+        .play-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
         }
         .play-section select {
             background-color: #555;
             color: white;
+            width: 200px;
         }
         .play-section button {
             background-color: #4CAF50;
             border: none;
             color: white;
             cursor: pointer;
+            width: 150px;
         }
         .play-section button:hover {
             background-color: #45a049;
@@ -88,7 +95,6 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            display: none;
         }
         .notification button {
             background-color: #4CAF50;
@@ -106,7 +112,7 @@
 </head>
 <body>
     <div class="sidebar">
-        <img id="profilePic" src="images/default/user/icon.png" alt="Profile Picture" onclick="changeProfilePicture()">
+        <img id="profilePic" src="images/default/user/icon.png" alt="Profile Picture">
         <p id="username">Default User</p>
         <a href="javascript:void(0)" onclick="showPage('java')">Minecraft: Java Edition</a>
         <a href="javascript:void(0)" onclick="showPage('bedrock')">Minecraft: Bedrock Edition</a>
@@ -134,15 +140,19 @@
 
     <div class="notification" id="setupNotification">
         <p>Welcome! Set up your profile to get started:</p>
-        <button onclick="setupProfile()">Set Up Now</button>
+        <form id="setupForm">
+            <input type="text" id="setupUsername" placeholder="Enter your username" required>
+            <input type="file" id="setupProfilePic" accept="image/*" required>
+            <button type="submit">Set Up</button>
+        </form>
     </div>
 
     <script>
         const usernameEl = document.getElementById('username');
         const profilePicEl = document.getElementById('profilePic');
         const notificationEl = document.getElementById('setupNotification');
+        const setupForm = document.getElementById('setupForm');
 
-        // Load stored profile info
         function loadProfile() {
             const storedUsername = localStorage.getItem('username');
             const storedProfilePic = localStorage.getItem('profilePic');
@@ -158,48 +168,33 @@
             }
         }
 
-        // Allow user to change profile picture
-        function changeProfilePicture() {
-            const profilePicInput = document.createElement('input');
-            profilePicInput.type = 'file';
-            profilePicInput.accept = 'image/*';
+        setupForm.addEventListener('submit', (event) => {
+            event.preventDefault();
 
-            profilePicInput.onchange = function (event) {
-                const file = event.target.files[0];
+            const newUsername = document.getElementById('setupUsername').value;
+            const profilePicInput = document.getElementById('setupProfilePic');
 
-                if (file) {
-                    const reader = new FileReader();
+            if (newUsername && profilePicInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    profilePicEl.src = reader.result;
+                    localStorage.setItem('profilePic', reader.result);
+                };
+                reader.readAsDataURL(profilePicInput.files[0]);
 
-                    reader.onload = function () {
-                        profilePicEl.src = reader.result;
-                        localStorage.setItem('profilePic', reader.result);
-                    };
-
-                    reader.readAsDataURL(file);
-                }
-            };
-
-            profilePicInput.click();
-        }
-
-        // Prompt user to set their username
-        usernameEl.addEventListener('click', () => {
-            const newUsername = prompt('Enter your username:', usernameEl.textContent);
-
-            if (newUsername) {
                 usernameEl.textContent = newUsername;
                 localStorage.setItem('username', newUsername);
+
+                notificationEl.style.display = 'none';
             }
         });
 
-        // Show selected page
         function showPage(page) {
             document.getElementById('java').style.display = 'none';
             document.getElementById('bedrock').style.display = 'none';
             document.getElementById(page).style.display = 'flex';
         }
 
-        // Launch the game
         function launchGame(type) {
             const baseUrl = 'https://jlauncher.netlify.app/clients/';
             const url = type === 'java'
@@ -208,26 +203,10 @@
             window.open(url, '_blank');
         }
 
-        // Setup profile from notification
-        function setupProfile() {
-            const newUsername = prompt('Enter your username:');
-
-            if (newUsername) {
-                usernameEl.textContent = newUsername;
-                localStorage.setItem('username', newUsername);
-            }
-
-            changeProfilePicture();
-
-            notificationEl.style.display = 'none';
-        }
-
-        // Load profile on startup
         loadProfile();
 
-        // Register service worker for PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(registration => {
+            navigator.serviceWorker.register('manifest/sw.js').then(registration => {
                 console.log('Service Worker registered with scope:', registration.scope);
             }).catch(error => {
                 console.error('Service Worker registration failed:', error);
