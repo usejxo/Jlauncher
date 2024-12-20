@@ -22,6 +22,7 @@
             left: 0;
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
         .sidebar img {
             border-radius: 50%;
@@ -29,14 +30,15 @@
             width: 100px;
             height: 100px;
             object-fit: cover;
+            cursor: pointer;
         }
         .sidebar a {
             padding: 15px 20px;
             text-decoration: none;
             color: white;
-            text-align: left;
             display: block;
-            font-size: 16px;
+            width: 100%;
+            text-align: center;
         }
         .sidebar a:hover {
             background-color: #333;
@@ -52,15 +54,8 @@
             align-items: center;
             flex-direction: column;
             height: 100vh;
-            position: relative;
             background-size: cover;
             background-position: center;
-        }
-        .play-section {
-            position: absolute;
-            bottom: 50px;
-            text-align: center;
-            width: 100%;
         }
         .play-section select, .play-section button {
             margin: 10px 0;
@@ -70,7 +65,7 @@
             width: 50%;
         }
         .play-section select {
-            background-color: grey;
+            background-color: #555;
             color: white;
         }
         .play-section button {
@@ -78,47 +73,22 @@
             border: none;
             color: white;
             cursor: pointer;
-            font-size: 16px;
-            border-radius: 4px;
-            margin-top: 10px;
         }
         .play-section button:hover {
-            background-color: #45a049;
-        }
-        .notification {
-            background-color: #333;
-            color: white;
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px;
-            border-radius: 5px;
-            z-index: 1000;
-        }
-        .notification button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-        .notification button:hover {
             background-color: #45a049;
         }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <img id="profilePic" src="https://jlauncher.netlify.app/images/default/user/icon.png" alt="Profile Picture">
+        <img id="profilePic" src="images/default/user/icon.png" alt="Profile Picture" onclick="changeProfilePicture()">
         <p id="username">Default User</p>
         <a href="javascript:void(0)" onclick="showPage('java')">Minecraft: Java Edition</a>
         <a href="javascript:void(0)" onclick="showPage('bedrock')">Minecraft: Bedrock Edition</a>
     </div>
 
     <div class="content">
-        <div id="java" class="launcher-content" style="background-image: url('https://jlauncher.netlify.app/images/java/display.png');">
+        <div id="java" class="launcher-content" style="background-image: url('images/java/display.png');">
             <div class="play-section">
                 <select id="versionSelector">
                     <option value="LV">Latest</option>
@@ -130,7 +100,7 @@
             </div>
         </div>
 
-        <div id="bedrock" class="launcher-content" style="display: none; background-image: url('https://jlauncher.netlify.app/images/bedrock/display.png');">
+        <div id="bedrock" class="launcher-content" style="display: none; background-image: url('images/bedrock/display.png');">
             <div class="play-section">
                 <button onclick="launchGame('bedrock')">Play</button>
             </div>
@@ -138,93 +108,82 @@
     </div>
 
     <script>
-        let isSetupComplete = localStorage.getItem('isSetupComplete') === 'true';
+        const usernameEl = document.getElementById('username');
+        const profilePicEl = document.getElementById('profilePic');
 
-        // Show setup notification on first load
-        if (!isSetupComplete) {
-            showSetupNotification();
-        }
+        // Load stored profile info
+        function loadProfile() {
+            const storedUsername = localStorage.getItem('username');
+            const storedProfilePic = localStorage.getItem('profilePic');
 
-        function showSetupNotification() {
-            const notification = document.createElement('div');
-            notification.classList.add('notification');
-            notification.innerHTML = `
-                <p>Let's get you set up! <strong>Set your profile picture and username.</strong></p>
-                <button onclick="openSetup()">Set Up</button>
-            `;
-            document.body.appendChild(notification);
-        }
-
-        function openSetup() {
-            const username = prompt('Enter your username:');
-            if (username) {
-                document.getElementById('username').innerText = username;
-                localStorage.setItem('username', username);
+            if (storedUsername) {
+                usernameEl.textContent = storedUsername;
             }
 
+            if (storedProfilePic) {
+                profilePicEl.src = storedProfilePic;
+            }
+        }
+
+        // Allow user to change profile picture
+        function changeProfilePicture() {
             const profilePicInput = document.createElement('input');
             profilePicInput.type = 'file';
             profilePicInput.accept = 'image/*';
-            profilePicInput.onchange = function(event) {
-                previewImage(event);
-                localStorage.setItem('profilePic', profilePicInput.files[0].name); // Storing the file name for future use
+
+            profilePicInput.onchange = function (event) {
+                const file = event.target.files[0];
+
+                if (file) {
+                    const reader = new FileReader();
+
+                    reader.onload = function () {
+                        profilePicEl.src = reader.result;
+                        localStorage.setItem('profilePic', reader.result);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
             };
+
             profilePicInput.click();
-
-            // Mark setup as complete and hide the notification
-            localStorage.setItem('isSetupComplete', 'true');
-            document.querySelector('.notification').style.display = 'none';
         }
 
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function () {
-                document.getElementById('profilePic').src = reader.result;
+        // Prompt user to set their username
+        usernameEl.addEventListener('click', () => {
+            const newUsername = prompt('Enter your username:', usernameEl.textContent);
+
+            if (newUsername) {
+                usernameEl.textContent = newUsername;
+                localStorage.setItem('username', newUsername);
             }
-            reader.readAsDataURL(event.target.files[0]);
+        });
+
+        // Show selected page
+        function showPage(page) {
+            document.getElementById('java').style.display = 'none';
+            document.getElementById('bedrock').style.display = 'none';
+            document.getElementById(page).style.display = 'flex';
         }
 
+        // Launch the game
         function launchGame(type) {
-            let url;
-            if (type === 'java') {
-                const selectedVersion = document.getElementById('versionSelector').value;
-                url = `https://jlauncher.netlify.app/clients/${selectedVersion}`;
-            } else if (type === 'bedrock') {
-                url = 'https://jlauncher.netlify.app/clients/bedrock/';
-            }
+            const baseUrl = 'https://jlauncher.netlify.app/clients/';
+            const url = type === 'java'
+                ? `${baseUrl}${document.getElementById('versionSelector').value}`
+                : `${baseUrl}bedrock/`;
             window.open(url, '_blank');
         }
 
-        // PWA Install Prompt
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installNotification = document.createElement('div');
-            installNotification.classList.add('notification');
-            installNotification.innerHTML = `
-                <p>Install the app for a better experience!</p>
-                <button onclick="installApp()">Install</button>
-            `;
-            document.body.appendChild(installNotification);
-        });
-
-        function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    console.log(choiceResult.outcome);
-                    deferredPrompt = null;
-                });
-            }
-        }
+        // Load profile on startup
+        loadProfile();
 
         // Register service worker for PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/manifest/sw.js').then((registration) => {
+            navigator.serviceWorker.register('sw.js').then(registration => {
                 console.log('Service Worker registered with scope:', registration.scope);
-            }).catch((error) => {
-                console.log('Service Worker registration failed:', error);
+            }).catch(error => {
+                console.error('Service Worker registration failed:', error);
             });
         }
     </script>
