@@ -59,10 +59,10 @@
         }
         .play-section select, .play-section button {
             margin: 10px 0;
-            padding: 20px;
+            padding: 10px 20px;
             border-radius: 6px;
             border: 1px solid #ccc;
-            font-size: 18px;
+            font-size: 16px;
         }
         .play-section {
             display: flex;
@@ -81,7 +81,12 @@
             border: none;
             color: white;
             cursor: pointer;
-            width: 170px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            width: auto;
+            text-align: center;
+            min-width: 150px; /* Ensures the button doesn't shrink too small */
         }
         .play-section button:hover {
             background-color: #45a049;
@@ -96,36 +101,6 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        #setupForm input[type="text"], #setupForm input[type="file"] {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            width: 80%;
-            background-color: #333;
-            color: white;
-        }
-
-        #setupForm input[type="text"]:focus, #setupForm input[type="file"]:focus {
-            border-color: #4CAF50;
-            outline: none;
-        }
-
-        #setupForm button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        #setupForm button:hover {
-            background-color: #45a049;
-        }
-
         .notification button {
             background-color: #4CAF50;
             border: none;
@@ -193,11 +168,6 @@
 
             if (storedProfilePic) {
                 profilePicEl.src = storedProfilePic;
-            }
-
-            // Hide the setup notification if profile is already set up
-            if (storedUsername && storedProfilePic) {
-                notificationEl.style.display = 'none';
             } else {
                 notificationEl.style.display = 'block';
             }
