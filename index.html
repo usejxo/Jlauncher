@@ -59,29 +59,29 @@
         }
         .play-section select, .play-section button {
             margin: 10px 0;
-            padding: 15px;
+            padding: 20px;
             border-radius: 6px;
             border: 1px solid #ccc;
-            font-size: 16px;
+            font-size: 18px;
         }
         .play-section {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 20px;
             align-items: center;
             justify-content: center;
         }
         .play-section select {
             background-color: #555;
             color: white;
-            width: 200px;
+            width: 220px;
         }
         .play-section button {
             background-color: #4CAF50;
             border: none;
             color: white;
             cursor: pointer;
-            width: 150px;
+            width: 170px;
         }
         .play-section button:hover {
             background-color: #45a049;
@@ -96,6 +96,36 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+        #setupForm input[type="text"], #setupForm input[type="file"] {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            width: 80%;
+            background-color: #333;
+            color: white;
+        }
+
+        #setupForm input[type="text"]:focus, #setupForm input[type="file"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        #setupForm button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #setupForm button:hover {
+            background-color: #45a049;
+        }
+
         .notification button {
             background-color: #4CAF50;
             border: none;
@@ -163,6 +193,11 @@
 
             if (storedProfilePic) {
                 profilePicEl.src = storedProfilePic;
+            }
+
+            // Hide the setup notification if profile is already set up
+            if (storedUsername && storedProfilePic) {
+                notificationEl.style.display = 'none';
             } else {
                 notificationEl.style.display = 'block';
             }
@@ -200,7 +235,7 @@
             const url = type === 'java'
                 ? `${baseUrl}${document.getElementById('versionSelector').value}`
                 : `${baseUrl}bedrock/`;
-            window.open(url, '_blank');
+            window.open(url, '', 'width=1024,height=768,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes');
         }
 
         loadProfile();
