@@ -84,7 +84,9 @@
             padding: 10px 20px;
             font-size: 16px;
             border-radius: 6px;
-            min-width: 150px;
+            width: auto;
+            text-align: center;
+            min-width: 150px; /* Ensures the button doesn't shrink too small */
         }
         .play-section button:hover {
             background-color: #45a049;
@@ -158,56 +160,81 @@
         const notificationEl = document.getElementById('setupNotification');
         const setupForm = document.getElementById('setupForm');
 
-        function setProfileDefaults() {
-            const defaultUsername = "Default User";
-            const defaultProfilePic = "images/default/user/icon.png";
+        // Load the user profile and check setup completion
+        function loadProfile() {
+            const storedUsername = localStorage.getItem('username');
+            const storedProfilePic = localStorage.getItem('profilePic');
+            const setupCompleted = localStorage.getItem('setupCompleted');
 
-            if (!localStorage.getItem('username')) {
-                localStorage.setItem('username', defaultUsername);
+            if (setupCompleted === 'true') {
+                return; // If setup is completed, don't show the setup notification
             }
 
-            if (!localStorage.getItem('profilePic')) {
-                localStorage.setItem('profilePic', defaultProfilePic);
+            if (storedUsername) {
+                usernameEl.textContent = storedUsername;
             }
 
-            usernameEl.textContent = localStorage.getItem('username');
-            profilePicEl.src = localStorage.getItem('profilePic');
+            if (storedProfilePic) {
+                profilePicEl.src = storedProfilePic;
+            } else {
+                notificationEl.style.display = 'block'; // Show the setup form if no profile picture
+            }
         }
 
         setupForm.addEventListener('submit', (event) => {
             event.preventDefault();
+
             const newUsername = document.getElementById('setupUsername').value;
             const profilePicInput = document.getElementById('setupProfilePic');
 
             if (newUsername && profilePicInput.files[0]) {
                 const reader = new FileReader();
-                reader.onload = () => {
+                reader.onload = function () {
+                    // Set profile picture and save it to localStorage
                     profilePicEl.src = reader.result;
                     localStorage.setItem('profilePic', reader.result);
                 };
                 reader.readAsDataURL(profilePicInput.files[0]);
 
+                // Set username and save it to localStorage
                 usernameEl.textContent = newUsername;
                 localStorage.setItem('username', newUsername);
+
+                // Mark setup as complete
+                localStorage.setItem('setupCompleted', 'true');
+
+                // Hide the setup notification
                 notificationEl.style.display = 'none';
             }
         });
 
+        // Function to show selected page (Java or Bedrock Edition)
         function showPage(page) {
             document.getElementById('java').style.display = 'none';
             document.getElementById('bedrock').style.display = 'none';
             document.getElementById(page).style.display = 'flex';
         }
 
+        // Function to launch the game
         function launchGame(type) {
             const baseUrl = 'https://jlauncher.netlify.app/clients/';
             const url = type === 'java'
                 ? `${baseUrl}${document.getElementById('versionSelector').value}`
                 : `${baseUrl}bedrock/`;
-            window.open(url, '', 'width=1024,height=768,toolbar=no,location=no,status=no,menubar=no,scrollbars=no');
+            window.open(url, '', 'width=1024,height=768,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes');
         }
 
-        setProfileDefaults();
+        // Initialize profile loading
+        loadProfile();
+
+        // Register service worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('manifest/sw.js').then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
+        }
     </script>
 </body>
 </html>
