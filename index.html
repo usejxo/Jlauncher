@@ -175,7 +175,7 @@
             if (storedProfilePic) {
                 profilePicEl.src = storedProfilePic;
             } else {
-                notificationEl.style.display = 'block';
+                notificationEl.style.display = 'block'; // Show the setup form if no profile picture
             }
         }
 
@@ -188,27 +188,32 @@
             if (newUsername && profilePicInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function () {
+                    // Set profile picture and save it to localStorage
                     profilePicEl.src = reader.result;
                     localStorage.setItem('profilePic', reader.result);
                 };
                 reader.readAsDataURL(profilePicInput.files[0]);
 
+                // Set username and save it to localStorage
                 usernameEl.textContent = newUsername;
                 localStorage.setItem('username', newUsername);
 
                 // Mark setup as complete
                 localStorage.setItem('setupCompleted', 'true');
 
+                // Hide the setup notification
                 notificationEl.style.display = 'none';
             }
         });
 
+        // Function to show selected page (Java or Bedrock Edition)
         function showPage(page) {
             document.getElementById('java').style.display = 'none';
             document.getElementById('bedrock').style.display = 'none';
             document.getElementById(page).style.display = 'flex';
         }
 
+        // Function to launch the game
         function launchGame(type) {
             const baseUrl = 'https://jlauncher.netlify.app/clients/';
             const url = type === 'java'
@@ -217,8 +222,10 @@
             window.open(url, '', 'width=1024,height=768,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes');
         }
 
+        // Initialize profile loading
         loadProfile();
 
+        // Register service worker for offline support
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('manifest/sw.js').then(registration => {
                 console.log('Service Worker registered with scope:', registration.scope);
