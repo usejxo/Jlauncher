@@ -57,24 +57,19 @@
             background-size: cover;
             background-position: center;
         }
-        .play-section select, .play-section button {
+        .play-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .play-section select {
             margin: 10px 0;
             padding: 10px 20px;
             border-radius: 6px;
             border: 1px solid #ccc;
             font-size: 16px;
-        }
-        .play-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: center;
-            justify-content: center;
-        }
-        .play-section select {
             background-color: #555;
             color: white;
-            width: 220px;
         }
         .play-section button {
             background-color: #4CAF50;
@@ -125,16 +120,18 @@
         <div id="java" class="launcher-content" style="background-image: url('images/java/display.png');">
             <div class="play-section">
                 <!-- Version Icon -->
-                <img id="versionIcon" src="" alt="Version Icon" style="width: 100px; height: 100px; display: block; margin-bottom: 20px;">
-                <select id="versionSelector" onchange="updateVersionIcon()">
-                    <option value="1.11.2">Latest</option>
-                    <option value="1.11.2">1.11.2</option>
-                    <option value="1.9.4">1.9.4</option>
-                    <option value="1.8.8">1.8.8</option>
-                    <option value="1.7.3">1.7.3</option>
-                    <option value="1.2.5">1.2.5</option>
-                </select>
-                <button onclick="launchGame('java')">Play</button>
+                <img id="versionIcon" src="" alt="Version Icon" style="width: 100px; height: 100px; display: block; margin-right: 20px;">
+                <div>
+                    <select id="versionSelector" onchange="updateVersionIcon()">
+                        <option value="1.11.2">Latest</option>
+                        <option value="1.11.2">1.11.2</option>
+                        <option value="1.9.4">1.9.4</option>
+                        <option value="1.8.8">1.8.8</option>
+                        <option value="1.7.3">1.7.3</option>
+                        <option value="1.2.5">1.2.5</option>
+                    </select>
+                    <button onclick="launchGame('java')">Play</button>
+                </div>
             </div>
         </div>
 
