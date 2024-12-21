@@ -60,7 +60,7 @@
         .play-section {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px; /* Reduced the gap for closer positioning */
         }
         .play-section select {
             margin: 10px 0;
@@ -120,7 +120,7 @@
         <div id="java" class="launcher-content" style="background-image: url('images/java/display.png');">
             <div class="play-section">
                 <!-- Version Icon -->
-                <img id="versionIcon" src="" alt="Version Icon" style="width: 100px; height: 100px; display: block; margin-right: 20px;">
+                <img id="versionIcon" src="https://jlauncher.netlify.app/clients/1.11.2/icon/icon.png" alt="Version Icon" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;">
                 <div>
                     <select id="versionSelector" onchange="updateVersionIcon()">
                         <option value="1.11.2">Latest</option>
