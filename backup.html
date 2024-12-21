@@ -124,9 +124,7 @@
     <div class="content">
         <div id="java" class="launcher-content" style="background-image: url('images/java/display.png');">
             <div class="play-section">
-                <!-- Version Icon -->
-                <img id="versionIcon" src="" alt="Version Icon" style="width: 100px; height: 100px; display: block; margin-bottom: 20px;">
-                <select id="versionSelector" onchange="updateVersionIcon()">
+                <select id="versionSelector">
                     <option value="1.11.2">Latest</option>
                     <option value="1.11.2">1.11.2</option>
                     <option value="1.9.4">1.9.4</option>
@@ -213,16 +211,6 @@
                 ? `${baseUrl}${document.getElementById('versionSelector').value}`
                 : `${baseUrl}bedrock/`;
             window.open(url, '', 'width=1024,height=768,toolbar=no,location=no,status=no,menubar=no,scrollbars=no');
-        }
-
-        function updateVersionIcon() {
-            const versionSelector = document.getElementById('versionSelector');
-            const versionIcon = document.getElementById('versionIcon');
-            const selectedVersion = versionSelector.value;
-
-            // Set the icon URL based on the selected version
-            const iconUrl = `https://jlauncher.netlify.app/clients/${selectedVersion}/icon/icon.png`;
-            versionIcon.src = iconUrl;
         }
 
         setProfileDefaults();
