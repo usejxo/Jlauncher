@@ -120,7 +120,7 @@
         <div id="java" class="launcher-content" style="background-image: url('images/java/display.png');">
             <div class="play-section">
                 <!-- Version Icon -->
-                <img id="versionIcon" src="https://usejxo.github.io/jlauncher/clients/1.11.2/icon/icon.png" alt="Version Icon" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;">
+                <img id="versionIcon" src="https://usejxo.github.io/Jlauncher/clients/1.11.2/icon/icon.png" alt="Version Icon" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;">
                 <div>
                     <select id="versionSelector" onchange="updateVersionIcon()">
                         <option value="1.11.2">Latest</option>
@@ -206,7 +206,7 @@
         }
 
         function launchGame(type) {
-            const baseUrl = 'https://usejxo.github.io/jlauncher/clients/';
+            const baseUrl = 'https://usejxo.github.io/Jlauncher/clients/';
             const url = type === 'java'
                 ? `${baseUrl}${document.getElementById('versionSelector').value}`
                 : `${baseUrl}bedrock/`;
@@ -219,7 +219,7 @@
             const selectedVersion = versionSelector.value;
 
             // Set the icon URL based on the selected version
-            const iconUrl = `https://usejxo.github.io/jlauncher/clients/${selectedVersion}/icon/icon.png`;
+            const iconUrl = `https://usejxo.github.io/Jlauncher/clients/${selectedVersion}/icon/icon.png`;
             versionIcon.src = iconUrl;
         }
 
