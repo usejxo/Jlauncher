@@ -1,7 +1,7 @@
 {
     "name": "Jlauncher",
     "short_name": "MC",
-    "start_url": "/index.html",
+    "start_url": "/Jlauncher/index.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
