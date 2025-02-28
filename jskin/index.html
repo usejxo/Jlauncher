@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Jskin</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000000;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        canvas {
+            border: 1px solid #ffffff00;
+            display: block;
+            margin-bottom: 20px;
+        }
+        button, input[type="text"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover, input[type="text"]:focus {
+            background-color: #218838;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+        }
+        #searchButton {
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="skinInput" placeholder="Enter a minecraft username" />
+        <button id="searchButton">Search</button> <!-- Search Button -->
+    </div>
+
+    <canvas id="simpleCanvas" width="300" height="300"></canvas>
+
+    <button id="downloadButton">Download Skin</button>
+    <input type="file" id="uploadButton">
+
+    <script src="skinview/skinview.bundle.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const defaultSkin = 'Steve'; // Default skin
+            let skinName = defaultSkin; // Initialize skin name
+
+            // Function to initialize and load skin viewer
+            function createSkinViewer(skin) {
+                const canvas = document.getElementById("simpleCanvas");
+                const skinViewer = new skinview3d.SkinViewer({
+                    canvas: canvas,
+                    width: 300,
+                    height: 300,
+                    skin: `https://minotar.net/skin/${skin}`
+                });
+
+                skinViewer.fov = 70;
+                skinViewer.zoom = 0.90;
+                skinViewer.globalLight.intensity = 3;
+                skinViewer.cameraLight.intensity = 0.60;
+                skinViewer.autoRotate = false;
+                skinViewer.autoRotateSpeed = 0.5;
+
+                skinViewer.animation = new skinview3d.WalkingAnimation();
+                skinViewer.animation.speed = 0.5;
+
+                skinViewer.controls.enableRotate = false;
+                skinViewer.controls.enableZoom = false;
+                skinViewer.controls.enablePan = false;
+
+                return skinViewer;
+            }
+
+            // Initialize the skin viewer with the default skin
+            let skinViewer = createSkinViewer(skinName);
+
+            // Load the default skin
+            loadSkin(skinName);
+
+            // Function to load skin based on skin name
+            function loadSkin(name) {
+                skinViewer = createSkinViewer(name); // Create a new viewer for the new skin
+                document.getElementById("skinInput").value = name; // Update input value to the new skin name
+            }
+
+            // Trigger search on "Enter" key press
+            document.getElementById("skinInput").addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    skinName = document.getElementById("skinInput").value.trim();
+                    if (skinName) {
+                        loadSkin(skinName); // Load the new skin when "Enter" is pressed
+                    }
+                }
+            });
+
+            // Handle search button click
+            document.getElementById("searchButton").addEventListener("click", () => {
+                skinName = document.getElementById("skinInput").value.trim();
+                if (skinName) {
+                    loadSkin(skinName); // Load the new skin when the "Search" button is clicked
+                }
+            });
+
+            // Handle download skin button
+            document.getElementById("downloadButton").addEventListener("click", () => {
+                const skinUrl = `https://minotar.net/skin/${skinName}`;
+
+                // Fetch the image data
+                fetch(skinUrl)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        // Create an object URL for the blob
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `${skinName}.png`; // Download the skin with the name of the skin
+                        link.click();
+                    })
+                    .catch(error => {
+                        console.error("Failed to download the skin:", error);
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
