@@ -60,7 +60,7 @@
         .play-section {
             display: flex;
             align-items: center;
-            gap: 10px; /* Reduced the gap for closer positioning */
+            gap: 10px;
         }
         .play-section select {
             margin: 10px 0;
@@ -115,6 +115,8 @@
         <a href="javascript:void(0)" onclick="showPage('java')">Minecraft: Java Edition</a>
         <a href="javascript:void(0)" onclick="showPage('bedrock')">Minecraft: Bedrock Edition</a>
         <a href="javascript:void(0)" onclick="showPage('mods')">Mods</a>
+        <!-- New Jskin tab -->
+        <a href="javascript:void(0)" onclick="showPage('jskin')">Jskin</a>
     </div>
 
     <div class="content">
@@ -145,6 +147,11 @@
         
         <div id="mods" class="launcher-content" style="display: none;">
             <iframe src="https://usejxo.github.io/Jlauncher/furnace/index.html" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+        
+        <!-- New Jskin content section -->
+        <div id="jskin" class="launcher-content" style="display: none;">
+            <iframe src="https://usejxo.github.io/Jlauncher/jskin/index.html" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
     </div>
 
@@ -208,6 +215,7 @@
             document.getElementById('java').style.display = 'none';
             document.getElementById('bedrock').style.display = 'none';
             document.getElementById('mods').style.display = 'none';
+            document.getElementById('jskin').style.display = 'none';
             document.getElementById(page).style.display = 'flex';
         }
 
@@ -223,8 +231,6 @@
             const versionSelector = document.getElementById('versionSelector');
             const versionIcon = document.getElementById('versionIcon');
             const selectedVersion = versionSelector.value;
-
-            // Set the icon URL based on the selected version
             const iconUrl = `https://usejxo.github.io/Jlauncher/clients/${selectedVersion}/icon/icon.png`;
             versionIcon.src = iconUrl;
         }
