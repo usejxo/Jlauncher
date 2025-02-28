@@ -134,9 +134,6 @@
     <h3>Create Modpack</h3>
     <label for="modpack-name">Modpack Name:</label>
     <input type="text" id="modpack-name" placeholder="Enter Modpack Name" />
-    <p>Eaglerforge URL is fixed to: <br>
-      <strong>https://usejxo.github.io/Jlauncher/clients/furnace/index.html</strong>
-    </p>
     <div>
       <button onclick="createModpack()" class="install-btn">Create</button>
       <button onclick="closeCreateModpackModal()" class="install-btn">Cancel</button>
@@ -187,7 +184,7 @@
     }
 
     function deleteAllDataConfirmed() {
-      localStorage.removeItem("modpacks"); // Delete all modpack data
+      localStorage.removeItem("modpacks");
       modpacks = [];
       renderModpacks();
       closeDeleteAllDataPopup();
@@ -311,9 +308,9 @@
           button.innerText = "Uninstall";
           button.className = "uninstall-btn";
         }
-        saveModpacks(); // Save changes to localStorage
-        renderModpacks(); // Update modpack list buttons
-        updatePopupMods(); // Refresh the installed mods list in the popup
+        saveModpacks();
+        renderModpacks();
+        updatePopupMods();
       }
     }
 
@@ -326,7 +323,6 @@
       let packName = document.getElementById("popup-title").innerText;
       let pack = modpacks.find(p => p.name === packName);
       if (pack) {
-        // Use the fixed Eaglerforge URL
         let modQuery = pack.mods.map(m => encodeURIComponent(m)).join(",");
         window.open(`${fixedUrl}?fmods=${modQuery}`, "_blank");
       }
@@ -343,8 +339,6 @@
     function createModpack() {
       let name = document.getElementById("modpack-name").value;
       if (!name) return;
-
-      // The URL is always set to the fixed URL
       modpacks.push({ name, mods: [], url: fixedUrl });
       saveModpacks();
       renderModpacks();
