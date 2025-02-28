@@ -255,7 +255,7 @@
 
     function browseMods() {
       document.getElementById("browse-mods-popup").style.display = "block";
-      fetch('https://jfurnace.netlify.app/assets/mods/mods.json')
+      fetch('https://usejxo.github.io/Furnace/assets/mods/mods.json')
         .then(response => response.json())
         .then(data => {
           let list = document.getElementById("mod-list");
