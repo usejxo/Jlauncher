@@ -114,6 +114,7 @@
         <p id="username">Default User</p>
         <a href="javascript:void(0)" onclick="showPage('java')">Minecraft: Java Edition</a>
         <a href="javascript:void(0)" onclick="showPage('bedrock')">Minecraft: Bedrock Edition</a>
+        <a href="javascript:void(0)" onclick="showPage('mods')">Mods</a>
     </div>
 
     <div class="content">
@@ -140,6 +141,10 @@
             <div class="play-section">
                 <button onclick="launchGame('bedrock')">Play</button>
             </div>
+        </div>
+        
+        <div id="mods" class="launcher-content" style="display: none;">
+            <iframe src="https://usejxo.github.io/Jlauncher/furnace/index.html" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
     </div>
 
@@ -202,6 +207,7 @@
         function showPage(page) {
             document.getElementById('java').style.display = 'none';
             document.getElementById('bedrock').style.display = 'none';
+            document.getElementById('mods').style.display = 'none';
             document.getElementById(page).style.display = 'flex';
         }
 
