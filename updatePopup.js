@@ -1,5 +1,7 @@
 (function() {
-    if (!localStorage.getItem("seenPopup")) {
+    const popupKey = "seenPopup_v2"; // Change key name to ensure a fresh start
+
+    if (!localStorage.getItem(popupKey)) {
         let popup = document.createElement("div");
         popup.innerHTML = `
             <div style="
@@ -13,6 +15,7 @@
                 border-radius: 10px;
                 text-align: center;
                 box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+                z-index: 9999;
             ">
                 <p>Check it out✨!<br>Jlauncher just got updated!</p>
                 <ul style="text-align: left; display: inline-block;">
@@ -27,7 +30,7 @@
                     margin-top: 10px;
                     cursor: pointer;
                     border-radius: 5px;
-                " onclick="this.parentElement.remove(); localStorage.setItem('seenPopup', 'true');">
+                " onclick="this.parentElement.remove(); localStorage.setItem('${popupKey}', Date.now());">
                     Close
                 </button>
             </div>
