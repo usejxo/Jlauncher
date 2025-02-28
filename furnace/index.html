@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Furnace Modpacks</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: white;
+      margin: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    .modpack-list {
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .modpack-item {
+      background: #333;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .install-btn,
+    .uninstall-btn,
+    .open-btn,
+    .play-btn,
+    .delete-btn {
+      background-color: orange;
+      color: black;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .popup,
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      width: 400px;
+    }
+    .mod-list {
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .mod-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #444;
+    }
+    .mod-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+    .author-info {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .admin-menu {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #444;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+    .admin-menu button {
+      background-color: red;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .modal button {
+      background-color: orange;
+    }
+    .delete-all-popup button {
+      background-color: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Furnace Modpacks</h2>
+    <button onclick="showCreateModpackModal()" class="install-btn">+ Create Modpack</button>
+    <div id="modpack-list" class="modpack-list"></div>
+  </div>
+
+  <div id="modpack-popup" class="popup">
+    <h3 id="popup-title"></h3>
+    <p>Installed Mods:</p>
+    <ul id="popup-mods"></ul>
+    <button onclick="browseMods()" class="install-btn">Add More Mods</button>
+    <button onclick="playModpack()" class="play-btn">Play</button>
+    <button onclick="closePopup()" class="install-btn">Close</button>
+  </div>
+
+  <div id="browse-mods-popup" class="popup">
+    <h3>Browse Mods</h3>
+    <div id="mod-list" class="mod-list"></div>
+    <button onclick="closeBrowseMods()" class="install-btn">Close</button>
+  </div>
+
+  <div id="create-modpack-modal" class="modal">
+    <h3>Create Modpack</h3>
+    <label for="modpack-name">Modpack Name:</label>
+    <input type="text" id="modpack-name" placeholder="Enter Modpack Name" />
+    <p>Eaglerforge URL is fixed to: <br>
+      <strong>https://usejxo.github.io/Jlauncher/clients/furnace/index.html</strong>
+    </p>
+    <div>
+      <button onclick="createModpack()" class="install-btn">Create</button>
+      <button onclick="closeCreateModpackModal()" class="install-btn">Cancel</button>
+    </div>
+  </div>
+
+  <div id="delete-modpack-modal" class="modal">
+    <h3>Confirm Delete</h3>
+    <p>Are you sure you want to delete this modpack?</p>
+    <div>
+      <button onclick="deleteModpack()" class="install-btn">Yes, Delete</button>
+      <button onclick="closeDeleteModpackModal()" class="install-btn">Cancel</button>
+    </div>
+  </div>
+
+  <div id="delete-all-data-popup" class="delete-all-popup popup">
+    <h3>Delete All Data</h3>
+    <p>Are you sure you want to delete all modpacks and mods? This action cannot be undone.</p>
+    <div>
+      <button onclick="deleteAllDataConfirmed()" class="install-btn">Yes, Delete All</button>
+      <button onclick="closeDeleteAllDataPopup()" class="install-btn">Cancel</button>
+    </div>
+  </div>
+
+  <div id="admin-menu" class="admin-menu">
+    <button onclick="showDeleteAllDataPopup()">Delete All Data</button>
+  </div>
+
+  <script>
+    let modpacks = JSON.parse(localStorage.getItem("modpacks")) || [];
+    let deleteIndex = -1;
+    const fixedUrl = "https://usejxo.github.io/Jlauncher/clients/furnace/index.html";
+
+    // Toggle admin menu visibility with Ctrl + Shift + D
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        let adminMenu = document.getElementById('admin-menu');
+        adminMenu.style.display = adminMenu.style.display === 'block' ? 'none' : 'block';
+      }
+    });
+
+    function showDeleteAllDataPopup() {
+      document.getElementById("delete-all-data-popup").style.display = "block";
+    }
+
+    function closeDeleteAllDataPopup() {
+      document.getElementById("delete-all-data-popup").style.display = "none";
+    }
+
+    function deleteAllDataConfirmed() {
+      localStorage.removeItem("modpacks"); // Delete all modpack data
+      modpacks = [];
+      renderModpacks();
+      closeDeleteAllDataPopup();
+    }
+
+    function deleteModpack() {
+      if (deleteIndex >= 0) {
+        modpacks.splice(deleteIndex, 1);
+        saveModpacks();
+        renderModpacks();
+      }
+      closeDeleteModpackModal();
+    }
+
+    function closeDeleteModpackModal() {
+      document.getElementById("delete-modpack-modal").style.display = "none";
+    }
+
+    function saveModpacks() {
+      localStorage.setItem("modpacks", JSON.stringify(modpacks));
+    }
+
+    function renderModpacks() {
+      let list = document.getElementById("modpack-list");
+      list.innerHTML = "";
+      modpacks.forEach((pack, index) => {
+        let div = document.createElement("div");
+        div.className = "modpack-item";
+        div.innerHTML = `
+          <span>${pack.name}</span>
+          <button onclick="openModpack(${index})" class="open-btn">Open</button>
+          <button onclick="playModpack()" class="play-btn">Play</button>
+          <button onclick="prepareDeleteModpack(${index})" class="delete-btn">Delete Modpack</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function openModpack(index) {
+      let pack = modpacks[index];
+      document.getElementById("popup-title").innerText = pack.name;
+      updatePopupMods();
+      document.getElementById("modpack-popup").style.display = "block";
+    }
+
+    // Update the list of installed mods in the popup
+    function updatePopupMods() {
+      let modpackName = document.getElementById("popup-title").innerText;
+      let pack = modpacks.find(p => p.name === modpackName);
+      let modList = document.getElementById("popup-mods");
+      modList.innerHTML = "";
+      if (pack && pack.mods && pack.mods.length > 0) {
+        pack.mods.forEach(mod => {
+          let li = document.createElement("li");
+          li.innerText = mod;
+          modList.appendChild(li);
+        });
+      } else {
+        let li = document.createElement("li");
+        li.innerText = "No mods installed.";
+        modList.appendChild(li);
+      }
+    }
+
+    function closePopup() {
+      document.getElementById("modpack-popup").style.display = "none";
+    }
+
+    function browseMods() {
+      document.getElementById("browse-mods-popup").style.display = "block";
+      fetch('https://jfurnace.netlify.app/assets/mods/mods.json')
+        .then(response => response.json())
+        .then(data => {
+          let list = document.getElementById("mod-list");
+          list.innerHTML = "";
+          data.mods.forEach(mod => {
+            let div = document.createElement("div");
+            div.className = "mod-item";
+            let buttonText = "Install";
+            let buttonClass = "install-btn";
+
+            // Check if mod is already installed
+            let isInstalled = isModInstalled(mod.name);
+            if (isInstalled) {
+              buttonText = "Uninstall";
+              buttonClass = "uninstall-btn";
+            }
+
+            div.innerHTML = `
+              <div style="display: flex; align-items: center;">
+                <img src="${mod.image}" alt="${mod.name}">
+                <div>
+                  <span>${mod.name}</span>
+                  <p>${mod.description}</p>
+                  <p>Author: ${mod.author}</p>
+                </div>
+              </div>
+              <button onclick="toggleInstallUninstall('${mod.name}')" id="btn-${mod.name}" class="${buttonClass}">${buttonText}</button>
+            `;
+            list.appendChild(div);
+          });
+        });
+    }
+
+    function closeBrowseMods() {
+      document.getElementById("browse-mods-popup").style.display = "none";
+    }
+
+    function toggleInstallUninstall(modName) {
+      let packIndex = modpacks.findIndex(p => p.name === document.getElementById("popup-title").innerText);
+      let button = document.getElementById(`btn-${modName}`);
+      if (packIndex !== -1) {
+        if (isModInstalled(modName)) {
+          // Uninstall mod
+          modpacks[packIndex].mods = modpacks[packIndex].mods.filter(m => m !== modName);
+          button.innerText = "Install";
+          button.className = "install-btn";
+        } else {
+          // Install mod
+          modpacks[packIndex].mods.push(modName);
+          button.innerText = "Uninstall";
+          button.className = "uninstall-btn";
+        }
+        saveModpacks(); // Save changes to localStorage
+        renderModpacks(); // Update modpack list buttons
+        updatePopupMods(); // Refresh the installed mods list in the popup
+      }
+    }
+
+    function isModInstalled(modName) {
+      let pack = modpacks.find(p => p.name === document.getElementById("popup-title").innerText);
+      return pack && pack.mods.includes(modName);
+    }
+
+    function playModpack() {
+      let packName = document.getElementById("popup-title").innerText;
+      let pack = modpacks.find(p => p.name === packName);
+      if (pack) {
+        // Use the fixed Eaglerforge URL
+        let modQuery = pack.mods.map(m => encodeURIComponent(m)).join(",");
+        window.open(`${fixedUrl}?fmods=${modQuery}`, "_blank");
+      }
+    }
+
+    function showCreateModpackModal() {
+      document.getElementById("create-modpack-modal").style.display = "block";
+    }
+
+    function closeCreateModpackModal() {
+      document.getElementById("create-modpack-modal").style.display = "none";
+    }
+
+    function createModpack() {
+      let name = document.getElementById("modpack-name").value;
+      if (!name) return;
+
+      // The URL is always set to the fixed URL
+      modpacks.push({ name, mods: [], url: fixedUrl });
+      saveModpacks();
+      renderModpacks();
+      closeCreateModpackModal();
+    }
+
+    function prepareDeleteModpack(index) {
+      deleteIndex = index;
+      document.getElementById("delete-modpack-modal").style.display = "block";
+    }
+
+    renderModpacks();
+  </script>
+</body>
+</html>
