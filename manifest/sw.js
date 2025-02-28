@@ -1,5 +1,5 @@
 // Name of the cache
-const CACHE_NAME = 'Jlauncher-cache-V2';
+const CACHE_NAME = 'Jlauncher-cache-V3-Update';
 
 // Install event: Cache all files in the specified list during the install phase
 self.addEventListener('install', (event) => {
