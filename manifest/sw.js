@@ -1,5 +1,5 @@
 // Name of the cache
-const CACHE_NAME = 'Jlauncher-cache-V5-Update'; //Updates the PWA app when chnaged
+const CACHE_NAME = 'Jlauncher-cache-V6-Update'; //Updates the PWA app when chnaged
 
 // Install event: Cache all files in the specified list during the install phase
 self.addEventListener('install', (event) => {
