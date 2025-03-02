@@ -2,241 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="images/icon/icon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest/manifest.json">
-    <title>Jlauncher</title>
+    <title>JLauncher Installation</title>
     <style>
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: white;
-        }
-        .sidebar {
-            background-color: #111;
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .sidebar img {
-            border-radius: 50%;
-            margin: 20px auto;
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-        }
-        .sidebar a {
-            padding: 20px 25px;
-            text-decoration: none;
-            color: white;
-            display: block;
-            width: 100%;
             text-align: center;
-            font-size: 16px;
-        }
-        .sidebar a:hover {
-            background-color: #333;
-        }
-        .content {
-            margin-left: 200px;
-            padding: 0;
-            min-height: 100vh;
-        }
-        .launcher-content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            background-size: cover;
-            background-position: center;
-        }
-        .play-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .play-section select {
-            margin: 10px 0;
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            background-color: #555;
-            color: white;
-        }
-        .play-section button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 6px;
-            min-width: 150px;
-        }
-        .play-section button:hover {
-            background-color: #45a049;
-        }
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #333;
-            color: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .notification button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            margin-top: 10px;
-            border-radius: 5px;
-            cursor: pointer;
+        .instruction {
+            margin: 20px 0;
         }
-        .notification button:hover {
-            background-color: #45a049;
+        img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <img id="profilePic" src="images/default/user/icon.png" alt="Profile Picture">
-        <p id="username">Default User</p>
-        <a href="javascript:void(0)" onclick="showPage('java')">Minecraft: Java Edition</a>
-        <a href="javascript:void(0)" onclick="showPage('bedrock')">Minecraft: Bedrock Edition</a>
-        <a href="javascript:void(0)" onclick="showPage('mods')">Mods</a>
-        <!-- New Jskin tab -->
-        <a href="javascript:void(0)" onclick="showPage('jskin')">Jskin</a>
-    </div>
-
-    <div class="content">
-        <div id="java" class="launcher-content" style="background-image: url('images/java/display.png');">
-            <div class="play-section">
-                <!-- Version Icon -->
-                <img id="versionIcon" src="https://usejxo.github.io/Jlauncher/clients/1.11.2/icon/icon.png" alt="Version Icon" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;">
-                <div>
-                    <select id="versionSelector" onchange="updateVersionIcon()">
-                        <option value="1.11.2">Latest</option>
-                        <option value="1.11.2">1.11.2</option>
-                        <option value="1.9.4">1.9.4</option>
-                        <option value="1.8.8">1.8.8</option>
-                        <option value="1.7.3">1.7.3</option>
-                        <option value="1.5.2">1.5.2</option>
-                        <option value="1.2.5">1.2.5</option>
-                    </select>
-                    <button onclick="launchGame('java')">Play</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="bedrock" class="launcher-content" style="display: none; background-image: url('images/bedrock/display.png');">
-            <div class="play-section">
-                <button onclick="launchGame('bedrock')">Play</button>
-            </div>
-        </div>
-        
-        <div id="mods" class="launcher-content" style="display: none;">
-            <iframe src="https://usejxo.github.io/Jlauncher/furnace/index.html" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
-        
-        <!-- New Jskin content section -->
-        <div id="jskin" class="launcher-content" style="display: none;">
-            <iframe src="https://usejxo.github.io/Jlauncher/jskin/index.html" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
-    </div>
-
-    <div class="notification" id="setupNotification" style="display: none;">
-        <p>Welcome! Set up your profile to get started:</p>
-        <form id="setupForm">
-            <input type="text" id="setupUsername" placeholder="Enter your username" required>
-            <input type="file" id="setupProfilePic" accept="image/*" required>
-            <button type="submit">Set Up</button>
-        </form>
-    </div>
-
-    <script>
-        const usernameEl = document.getElementById('username');
-        const profilePicEl = document.getElementById('profilePic');
-        const notificationEl = document.getElementById('setupNotification');
-        const setupForm = document.getElementById('setupForm');
-
-        function setProfileDefaults() {
-            const defaultUsername = "Default User";
-            const defaultProfilePic = "images/default/user/icon.png";
-
-            if (!localStorage.getItem('username')) {
-                localStorage.setItem('username', defaultUsername);
-            }
-
-            if (!localStorage.getItem('profilePic')) {
-                localStorage.setItem('profilePic', defaultProfilePic);
-            }
-
-            usernameEl.textContent = localStorage.getItem('username');
-            profilePicEl.src = localStorage.getItem('profilePic');
-        }
-
-        // Check if setup has been completed
-        if (!localStorage.getItem('setupComplete')) {
-            notificationEl.style.display = 'block';
-        }
-
-        setupForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const newUsername = document.getElementById('setupUsername').value;
-            const profilePicInput = document.getElementById('setupProfilePic');
-
-            if (newUsername && profilePicInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    profilePicEl.src = reader.result;
-                    localStorage.setItem('profilePic', reader.result);
-                };
-                reader.readAsDataURL(profilePicInput.files[0]);
-
-                usernameEl.textContent = newUsername;
-                localStorage.setItem('username', newUsername);
-                localStorage.setItem('setupComplete', true);
-                notificationEl.style.display = 'none';
-            }
-        });
-
-        function showPage(page) {
-            document.getElementById('java').style.display = 'none';
-            document.getElementById('bedrock').style.display = 'none';
-            document.getElementById('mods').style.display = 'none';
-            document.getElementById('jskin').style.display = 'none';
-            document.getElementById(page).style.display = 'flex';
-        }
-
-        function launchGame(type) {
-            const baseUrl = 'https://usejxo.github.io/Jlauncher/clients/';
-            const url = type === 'java'
-                ? `${baseUrl}${document.getElementById('versionSelector').value}`
-                : `${baseUrl}bedrock/`;
-            window.open(url, '', 'width=1024,height=768,toolbar=no,location=no,status=no,menubar=no,scrollbars=no');
-        }
-
-        function updateVersionIcon() {
-            const versionSelector = document.getElementById('versionSelector');
-            const versionIcon = document.getElementById('versionIcon');
-            const selectedVersion = versionSelector.value;
-            const iconUrl = `https://usejxo.github.io/Jlauncher/clients/${selectedVersion}/icon/icon.png`;
-            versionIcon.src = iconUrl;
-        }
-
-        setProfileDefaults();
-    </script>
-  <script src="updatePopup.js"></script>
+    <h1>To continue using JLauncher</h1>
+    <p class="instruction">Go to <a href="https://usejxo.github.io/Jlauncher" target="_blank">https://usejxo.github.io/Jlauncher</a></p>
+    <p class="instruction">And click the</p>
+    <img src="images/download.png" alt="Download Button">
+    <p class="instruction">button</p>
+    <p class="instruction">Then click the install button:</p>
+    <img src="images/install menu.png" alt="Install Menu">
+    <img src="images/install.png" alt="Install Button">
 </body>
 </html>
