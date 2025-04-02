@@ -1,4 +1,29 @@
-
+// This is generally a bad practice, but we need to run scripts in the main context before the DOM loads. Because we are only matching eaglercraft.com, unsafeWindow should be safe to use.
+// If someone knows a better way of doing this, please create an issue
+try {
+    unsafeWindow.console.warn("DANGER: This userscript is  using unsafeWindow. Unsafe websites could potentially use this to gain access to data and other content that the browser normally wouldn't allow!")
+    Object.defineProperty(window, "clientWindow", {
+        value: unsafeWindow
+    }); // If this is a userscript, use unsafeWindow
+  } catch {
+    Object.defineProperty(window, "clientWindow", {
+        value: window
+    }); // If this is plain javascript, use window
+  }
+  clientWindow.console.log("Eagler Console v1.0.0")
+  // TODO: remove the mobile check is implement the dynamic enabling and disabling of individual features
+  function isMobile() {
+    try {
+        document.createEvent("TouchEvent");
+        return true;
+    } catch (e) {
+        return false;
+    }
+  }
+  if(!isMobile()) {
+    console.log("No Alert")
+  }
+  // TODO: consolidate all of these into a single object?
   clientWindow.crouchLock = false; // Used for crouch mobile control
   clientWindow.sprintLock = false; // Used for sprint mobile control
   clientWindow.keyboardFix = false; // keyboardFix ? "Standard Keyboard" : "Compatibility Mode"
