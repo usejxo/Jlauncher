@@ -1,61 +1,68 @@
-(function () {
-  // Create overlay
-  const overlay = document.createElement("div");
-  overlay.style.cssText = `
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;
-    font-family: Arial, sans-serif;
-  `;
+// Ban System for Educational Site
+// Add this script to your site's HTML
 
-  // Create modal
-  const modal = document.createElement("div");
-  modal.style.cssText = `
-    background: #111;
-    color: #fff;
-    padding: 20px;
-    width: 320px;
-    border-radius: 8px;
-    box-shadow: 0 0 20px #000;
-  `;
-
-  modal.innerHTML = `
-    <h3 style="margin-top:0">JLauncher</h3>
-    <label>Realname:</label>
-    <input id="realname" style="width:100%;margin-bottom:10px" />
-
-    <label>Username:</label>
-    <input id="username" style="width:100%;margin-bottom:10px" />
-    <small>Do not make your username your real name.</small>
-
-    <button id="submit" style="margin-top:15px;width:100%">
-      Continue
-    </button>
-  `;
-
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-
-  // Handle submit
-  modal.querySelector("#submit").onclick = () => {
-    const realName = modal.querySelector("#realname").value;
-
-    if (/corey/i.test(realName)) {
-      modal.innerHTML = `
-        <h3>Banned</h3>
-        <p>
-          You have been banned from JLauncher for using it during class hours.
+(function() {
+  // List of banned usernames (you can modify this)
+  const bannedUsers = ['BBRRUUHH!!'];
+  
+  // Get username from localStorage
+  const username = localStorage.getItem('username');
+  
+  // Check if user is banned
+  if (username && bannedUsers.includes(username)) {
+    showBanScreen();
+  }
+  
+  function showBanScreen() {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #1a1a1a;
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+    `;
+    
+    // Create ban message
+    overlay.innerHTML = `
+      <div style="text-align: center; color: white; max-width: 500px; padding: 20px;">
+        <div style="font-size: 72px; margin-bottom: 20px;">🚫</div>
+        <h1 style="font-size: 32px; margin-bottom: 10px;">Access Restricted</h1>
+        <p style="font-size: 18px; color: #999; margin-bottom: 20px;">
+          Banned for use during class
         </p>
-        <p>
-          <strong>Your ban will expire on 1/16/2026.</strong>
+        <p style="font-size: 14px; color: #666;">
+          If you believe this is an error, please contact your teacher.
         </p>
-      `;
-    } else {
-      document.body.removeChild(overlay);
-    }
-  };
+      </div>
+    `;
+    
+    // Add to page
+    document.body.innerHTML = '';
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+    
+    // Prevent right-click and common shortcuts
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F12' || 
+          (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+          (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+          (e.ctrlKey && e.key === 'U')) {
+        e.preventDefault();
+      }
+    });
+  }
 })();
+
+// ADMIN FUNCTIONS (use in browser console to manage bans)
+// To unban: localStorage.removeItem('username')
+// To check current user: console.log(localStorage.getItem('username'))
+// To manually ban: localStorage.setItem('username', 'BBRRUUHH!!')
