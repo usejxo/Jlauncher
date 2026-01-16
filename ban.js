@@ -3,7 +3,7 @@
 
 (function() {
   // List of banned usernames (you can modify this)
-  const bannedUsers = ['BBRRUUHH!!'];
+  const bannedUsers = ['BBRRUUHH!!', 'corey wishhart'];
   
   // Get username from localStorage
   const username = localStorage.getItem('username');
@@ -61,8 +61,3 @@
     });
   }
 })();
-
-// ADMIN FUNCTIONS (use in browser console to manage bans)
-// To unban: localStorage.removeItem('username')
-// To check current user: console.log(localStorage.getItem('username'))
-// To manually ban: localStorage.setItem('username', 'BBRRUUHH!!')
