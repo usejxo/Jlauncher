@@ -125,7 +125,7 @@
         <div id="java" class="launcher-content" style="background-image: url('images/java/display.png');">
             <div class="play-section">
                 <!-- Version Icon -->
-                <img id="versionIcon" src="https://usejxo.github.io/Jlauncher/clients/1.11.2/icon/icon.png" alt="Version Icon" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;">
+                <img id="versionIcon" src="https://usejxo.github.io/Jlauncher/legacyclients/1.11.2/icon/icon.png" alt="Version Icon" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;">
                 <div>
                     <select id="versionSelector" onchange="updateVersionIcon()">
                         <option value="1.11.2">Latest</option>
@@ -230,7 +230,7 @@
         }
 
         function launchGame(type) {
-            const baseUrl = 'https://usejxo.github.io/Jlauncher/clients/';
+            const baseUrl = 'https://usejxo.github.io/Jlauncher/legacyclients/';
             const url = type === 'java'
                 ? `${baseUrl}${document.getElementById('versionSelector').value}`
                 : `${baseUrl}bedrock/`;
@@ -238,7 +238,7 @@
         }
 
         function launchController() {
-            const url = 'https://usejxo.github.io/Jlauncher/clients/controller';
+            const url = 'https://usejxo.github.io/Jlauncher/legacyclients/controller';
             window.open(url, '', 'width=1024,height=768,toolbar=no,location=no,status=no,menubar=no,scrollbars=no');
         }
 
@@ -246,7 +246,7 @@
             const versionSelector = document.getElementById('versionSelector');
             const versionIcon = document.getElementById('versionIcon');
             const selectedVersion = versionSelector.value;
-            const iconUrl = `https://usejxo.github.io/Jlauncher/clients/${selectedVersion}/icon/icon.png`;
+            const iconUrl = `https://usejxo.github.io/Jlauncher/legacyclients/${selectedVersion}/icon/icon.png`;
             versionIcon.src = iconUrl;
         }
 
